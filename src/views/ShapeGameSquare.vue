@@ -30,8 +30,9 @@ let dotSize = 12;
 const guidePoints = [
   { x: 21, y: 40 },
   { x: 400, y: 40 },
-  { x: 400, y: 375 },
-  { x: 23, y: 375 },
+  { x: 400, y: 385 },
+  { x: 23, y: 385 },
+  { x: 21, y: 40 },
 ];
 
 class Dot {
@@ -188,8 +189,6 @@ onMounted(() => {
 }
 #dots {
   z-index: 1000;
-  width: 450px;
-  height: 430px;
   position: relative;
   top: 3.3rem;
 }
@@ -243,7 +242,7 @@ onMounted(() => {
   margin-top: -1rem;
 }
 
-@keyframes just-appear {
+/* @keyframes just-appear {
   from {
     opacity:0;
     transform:translateY(-2rem);
@@ -252,6 +251,15 @@ onMounted(() => {
   to {
     opacity:1;
     transform:translateY(0);
+  }
+} */
+@keyframes just-appear {
+  from {
+    opacity:0;
+  }
+
+  to {
+    opacity:1;
   }
 }
 </style>

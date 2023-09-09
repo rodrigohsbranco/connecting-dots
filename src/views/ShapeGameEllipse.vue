@@ -37,6 +37,7 @@ const guidePoints = [
   { x: 315, y: 370 },
   { x: 195, y: 360 },
   { x: 75, y: 310 },
+  { x: 15, y: 210 },
 ];
 
 class Dot {
@@ -244,12 +245,10 @@ onMounted(() => {
 @keyframes just-appear {
   from {
     opacity:0;
-    transform:translateY(-2rem);
   }
 
   to {
     opacity:1;
-    transform:translateY(0);
   }
 }
 </style>
