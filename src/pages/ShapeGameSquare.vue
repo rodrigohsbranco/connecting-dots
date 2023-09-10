@@ -6,6 +6,10 @@ import nextButton from "../assets/images/nextButton.png";
 // import MuitoBem from '../assets/images/2-veryGood.jpeg'
 // import Proxima from '../assets/images/1-proxima.jpeg'
 
+// import fullSquare from '../assets/images/0-smile.jpeg'
+// import MuitoBem from '../assets/images/2-veryGood.jpeg'
+// import Proxima from '../assets/images/1-proxima.jpeg'
+
 import { onMounted, ref } from "vue";
 import shapeGameSquareBg from "../assets/images/shapeGameSquareBg.png";
 import BackButton from "../components/BackButton.vue";
