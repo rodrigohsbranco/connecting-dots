@@ -1,7 +1,7 @@
 <script setup>
-import starPicture from '../assets/images/starPicture.png'
-import congratulationsImg from '../assets/images/congratulationsImg.png'
-import nextButton from '../assets/images/nextButton.png'
+import starPicture from "../assets/images/starPicture.png";
+import congratulationsImg from "../assets/images/congratulationsImg.png";
+import nextButton from "../assets/images/nextButton.png";
 
 import { onMounted, ref } from "vue";
 import starBg from "../assets/images/starBg.png";
@@ -13,7 +13,7 @@ const router = useRouter();
 
 const pageRoute = ref("/ShapeGameOptions");
 
-const nextShape = (next)  => router.push(`${next}`);
+const nextShape = (next) => router.push(`${next}`);
 
 let dots = [];
 let guideDots = [];
@@ -74,7 +74,9 @@ onMounted(() => {
   canvas.height = 500;
 
   for (let i = 0; i < guidePoints.length; i++) {
-    guideDots.push(new Dot(guidePoints[i].x, guidePoints[i].y, "rgb(120, 120, 120)"));
+    guideDots.push(
+      new Dot(guidePoints[i].x, guidePoints[i].y, "rgb(120, 120, 120)")
+    );
   }
 
   canvas.addEventListener("mousedown", (event) => {
@@ -107,18 +109,14 @@ onMounted(() => {
       context.strokeStyle = "#E27E6E";
       context.lineWidth = 2;
       context.font = "24px Arial";
-    } 
-    
-    else if (!drawingCompleted) {
+    } else if (!drawingCompleted) {
       context.strokeStyle = "rgb(226, 126, 110)";
       context.lineWidth = 5;
       context.beginPath();
       context.moveTo(lastPos.x, lastPos.y);
       context.lineTo(currentPos.x, currentPos.y);
       context.stroke();
-    } 
-    
-    else {
+    } else {
       fillVertex(context);
       context.fillStyle = "rgb(226, 126, 110)";
       context.strokeStyle = "rgb(222, 222, 222)";
@@ -142,7 +140,10 @@ onMounted(() => {
   }
 
   function mousePressed() {
-    if (!drawingCompleted && guideDots[currentIndex].within(currentPos.x, currentPos.y)) {
+    if (
+      !drawingCompleted &&
+      guideDots[currentIndex].within(currentPos.x, currentPos.y)
+    ) {
       dots.push(new Dot(currentPos.x, currentPos.y, "#E27E6E"));
       currentIndex++;
       lastPos.x = currentPos.x;
@@ -150,8 +151,8 @@ onMounted(() => {
 
       if (currentIndex === guideDots.length) {
         dots.push(new Dot(guideDots[0].x, guideDots[0].y, "#E27E6E"));
-        document.querySelector('.congratulations').classList.add('active');
-        document.querySelector('.canvasShow').style.display = 'none';
+        document.querySelector(".congratulations").classList.add("active");
+        document.querySelector(".canvasShow").style.display = "none";
         drawingCompleted = true;
       }
     }
@@ -164,17 +165,21 @@ onMounted(() => {
 <template>
   <div class="star" :style="{ backgroundImage: `url(${starBg})` }">
     <BackButton :name="pageRoute" />
-    <HomeButton />
+    <!-- <HomeButton /> -->
     <canvas class="canvasShow" id="dots"></canvas>
 
     <section class="congratulations">
       <article>
-        <img :src="starPicture" alt="Forma de Estrela completa">
+        <img :src="starPicture" alt="Forma de Estrela completa" />
       </article>
 
       <div class="congratulations__text">
-        <img :src="congratulationsImg" alt="Parabéns!">
-        <img @click="nextShape('/GameModes')" :src="nextButton" alt="Botão de seta para o próximo desafio de forma!">
+        <img :src="congratulationsImg" alt="Parabéns!" />
+        <img
+          @click="nextShape('/GameModes')"
+          :src="nextButton"
+          alt="Botão de seta para o próximo desafio de forma!"
+        />
       </div>
     </section>
   </div>
@@ -197,43 +202,43 @@ onMounted(() => {
 }
 
 .congratulations {
-  position:absolute;
-  top:8rem;
-  width:100vw;
-  margin:auto;
-  left:0;
-  display:none;
-  z-index:1000;
-  place-items:center;
-  height:max-content;
+  position: absolute;
+  top: 8rem;
+  width: 100vw;
+  margin: auto;
+  left: 0;
+  display: none;
+  z-index: 1000;
+  place-items: center;
+  height: max-content;
 }
 
 .congratulations.active {
-  display:grid;
-  animation:just-appear .3s linear forwards;
+  display: grid;
+  animation: just-appear 0.3s linear forwards;
 }
 
 .congratulations img {
-  object-fit:cover;
+  object-fit: cover;
 }
 
 .congratulations div {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  width:580px;
-  position:relative;
-  left:4rem;
-  top:-1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 580px;
+  position: relative;
+  left: 4rem;
+  top: -1rem;
 }
 
 .congratulations div img:first-child {
-  width:29rem;
+  width: 29rem;
 }
 
 .congratulations div img:last-child {
-  cursor:pointer;
-  border-radius:1rem;
+  cursor: pointer;
+  border-radius: 1rem;
 }
 
 .congratulations__text {
@@ -242,11 +247,11 @@ onMounted(() => {
 
 @keyframes just-appear {
   from {
-    opacity:0;
+    opacity: 0;
   }
 
   to {
-    opacity:1;
+    opacity: 1;
   }
 }
 </style>

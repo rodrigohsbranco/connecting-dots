@@ -10,7 +10,7 @@ const startGame = () => router.push("/GameModes");
 
 <template>
   <div class="home" :style="{ backgroundImage: `url(${homeImage})` }">
-    <HomeButton />
+    <!-- <HomeButton /> -->
     <div class="start">
       <img
         class="start__img"

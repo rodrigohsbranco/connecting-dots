@@ -1,7 +1,7 @@
 <script setup>
-import trapezePicture from '../assets/images/trapezePicture.png'
-import veryGoodImg from '../assets/images/veryGoodImg.png'
-import nextButton from '../assets/images/nextButton.png'
+import trapezePicture from "../assets/images/trapezePicture.png";
+import veryGoodImg from "../assets/images/veryGoodImg.png";
+import nextButton from "../assets/images/nextButton.png";
 
 import { onMounted, ref } from "vue";
 import trapezeBg from "../assets/images/trapezeBg.png";
@@ -13,7 +13,7 @@ const router = useRouter();
 
 const pageRoute = ref("/ShapeGameOptions");
 
-const nextShape = (next)  => router.push(`${next}`);
+const nextShape = (next) => router.push(`${next}`);
 
 let dots = [];
 let guideDots = [];
@@ -68,7 +68,9 @@ onMounted(() => {
   canvas.height = 420;
 
   for (let i = 0; i < guidePoints.length; i++) {
-    guideDots.push(new Dot(guidePoints[i].x, guidePoints[i].y, "rgb(120, 120, 120)"));
+    guideDots.push(
+      new Dot(guidePoints[i].x, guidePoints[i].y, "rgb(120, 120, 120)")
+    );
   }
 
   canvas.addEventListener("mousedown", (event) => {
@@ -101,18 +103,14 @@ onMounted(() => {
       context.strokeStyle = "#E27E6E";
       context.lineWidth = 2;
       context.font = "24px Arial";
-    } 
-    
-    else if (!drawingCompleted) {
+    } else if (!drawingCompleted) {
       context.strokeStyle = "rgb(226, 126, 110)";
       context.lineWidth = 5;
       context.beginPath();
       context.moveTo(lastPos.x, lastPos.y);
       context.lineTo(currentPos.x, currentPos.y);
       context.stroke();
-    } 
-    
-    else {
+    } else {
       fillVertex(context);
       context.fillStyle = "rgb(226, 126, 110)";
       context.strokeStyle = "rgb(222, 222, 222)";
@@ -136,7 +134,10 @@ onMounted(() => {
   }
 
   function mousePressed() {
-    if (!drawingCompleted && guideDots[currentIndex].within(currentPos.x, currentPos.y)) {
+    if (
+      !drawingCompleted &&
+      guideDots[currentIndex].within(currentPos.x, currentPos.y)
+    ) {
       dots.push(new Dot(currentPos.x, currentPos.y, "#E27E6E"));
       currentIndex++;
       lastPos.x = currentPos.x;
@@ -144,8 +145,8 @@ onMounted(() => {
 
       if (currentIndex === guideDots.length) {
         dots.push(new Dot(guideDots[0].x, guideDots[0].y, "#E27E6E"));
-        document.querySelector('.veryGood').classList.add('active');
-        document.querySelector('.canvasShow').style.display = 'none';
+        document.querySelector(".veryGood").classList.add("active");
+        document.querySelector(".canvasShow").style.display = "none";
         drawingCompleted = true;
       }
     }
@@ -158,17 +159,21 @@ onMounted(() => {
 <template>
   <div class="trapeze" :style="{ backgroundImage: `url(${trapezeBg})` }">
     <BackButton :name="pageRoute" />
-    <HomeButton />
+    <!-- <HomeButton /> -->
     <canvas class="canvasShow" id="dots"></canvas>
 
     <section class="veryGood">
       <article>
-        <img :src="trapezePicture" alt="Forma de Trapézio completa">
+        <img :src="trapezePicture" alt="Forma de Trapézio completa" />
       </article>
 
       <div class="veryGood__text">
-        <img :src="veryGoodImg" alt="Mensagem de muito bem!">
-        <img @click="nextShape('/ShapeGamePentagon')" :src="nextButton" alt="Botão de seta para o próximo desafio de forma!">
+        <img :src="veryGoodImg" alt="Mensagem de muito bem!" />
+        <img
+          @click="nextShape('/ShapeGamePentagon')"
+          :src="nextButton"
+          alt="Botão de seta para o próximo desafio de forma!"
+        />
       </div>
     </section>
   </div>
@@ -191,43 +196,43 @@ onMounted(() => {
 }
 
 .veryGood {
-  position:absolute;
-  top:8rem;
-  width:100vw;
-  margin:auto;
-  left:0;
-  display:none;
-  z-index:1000;
-  place-items:center;
-  height:max-content;
+  position: absolute;
+  top: 8rem;
+  width: 100vw;
+  margin: auto;
+  left: 0;
+  display: none;
+  z-index: 1000;
+  place-items: center;
+  height: max-content;
 }
 
 .veryGood.active {
-  display:grid;
-  animation:just-appear .3s linear forwards;
+  display: grid;
+  animation: just-appear 0.3s linear forwards;
 }
 
 .veryGood img {
-  object-fit:cover;
+  object-fit: cover;
 }
 
 .veryGood div {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  width:580px;
-  position:relative;
-  left:4rem;
-  top:-1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 580px;
+  position: relative;
+  left: 4rem;
+  top: -1rem;
 }
 
 .veryGood div img:first-child {
-  width:29rem;
+  width: 29rem;
 }
 
 .veryGood div img:last-child {
-  cursor:pointer;
-  border-radius:1rem;
+  cursor: pointer;
+  border-radius: 1rem;
 }
 
 .veryGood__text {
@@ -236,11 +241,11 @@ onMounted(() => {
 
 @keyframes just-appear {
   from {
-    opacity:0;
+    opacity: 0;
   }
 
   to {
-    opacity:1;
+    opacity: 1;
   }
 }
 </style>
