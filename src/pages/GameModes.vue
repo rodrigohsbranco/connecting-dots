@@ -10,7 +10,7 @@ import { useRouter } from "vue-router";
 const pageRoute = ref('/');
 const router = useRouter();
 
-const goToShapeGameOptions = () => router.push("/shape");
+const goToShapeGameOptions = () => router.push("/ShapeGameOptions");
 
 </script>
 

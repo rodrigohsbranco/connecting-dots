@@ -11,7 +11,7 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-const pageRoute = ref("/shape");
+const pageRoute = ref("/ShapeGameOptions");
 
 const nextShape = (next)  => router.push(`${next}`);
 
@@ -174,7 +174,7 @@ onMounted(() => {
 
       <div class="congratulations__text">
         <img :src="congratulationsImg" alt="Parabéns!">
-        <img @click="nextShape('/modes')" :src="nextButton" alt="Botão de seta para o próximo desafio de forma!">
+        <img @click="nextShape('/GameModes')" :src="nextButton" alt="Botão de seta para o próximo desafio de forma!">
       </div>
     </section>
   </div>

@@ -4,7 +4,7 @@ import homeImage from '../assets/images/homeButton.png'
 
 <template>
   <div class="homeButton">
-    <img @click="startGame" class="homeButton__img" :src="homeImage" alt="Botão para voltar à tela inicial">
+    <img class="homeButton__img" :src="homeImage" alt="Botão para voltar à tela inicial">
   </div>
 </template>
 
