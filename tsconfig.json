@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "forceConsistentCasingInFileNames": false,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "noEmitOnError": true,
+    "strict": false,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": ["esnext", "dom", "WebWorker"],
+    "allowSyntheticDefaultImports": true,
+    "types": ["./node_modules/user-agent-data-types", "vite-plugin-pwa/client"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
+}

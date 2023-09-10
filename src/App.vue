@@ -1,11 +1,9 @@
-<script setup>
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <main>
-    <router-view></router-view>
-  </main>
+  <router-view></router-view>
 </template>
 
-<style scoped>
+<style lang="scss">
+@import "./assets/index.css";
 </style>
