@@ -5,7 +5,7 @@ import HomeButton from "../components/HomeButton.vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const startGame = () => router.push("/modes");
+const startGame = () => router.push("/GameModes");
 </script>
 
 <template>
