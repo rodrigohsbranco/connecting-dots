@@ -89,7 +89,10 @@ onMounted(() => {
     );
   }
 
-  canvas.addEventListener("mousedown", (event) => {
+  let isDrawing = false;
+
+  canvas.addEventListener("pointerdown", (event) => {
+    isDrawing = true;
     currentPos.x = event.clientX - canvas.getBoundingClientRect().left;
     currentPos.y = event.clientY - canvas.getBoundingClientRect().top;
     mousePressed();
@@ -99,6 +102,41 @@ onMounted(() => {
     currentPos.x = event.clientX - canvas.getBoundingClientRect().left;
     currentPos.y = event.clientY - canvas.getBoundingClientRect().top;
   });
+
+  canvas.addEventListener("pointermove", (event) => {
+    if (isDrawing) {
+      currentPos.x = event.clientX - canvas.getBoundingClientRect().left;
+      currentPos.y = event.clientY - canvas.getBoundingClientRect().top;
+      mousePressed()
+    }
+  });
+
+  canvas.addEventListener("pointerup", () => {
+    isDrawing = false;
+  });
+
+  canvas.addEventListener('touchstart', (event) => {
+    isDrawing = true;
+    const touch = event.touches[0];
+    currentPos.x = touch.clientX - canvas.getBoundingClientRect().left;
+    currentPos.y = touch.clientY - canvas.getBoundingClientRect().top;
+    mousePressed();
+  });
+
+  canvas.addEventListener('touchmove', (event) => {
+    if (isDrawing) {
+      const touch = event.touches[0];
+      currentPos.x = touch.clientX - canvas.getBoundingClientRect().left;
+      currentPos.y = touch.clientY - canvas.getBoundingClientRect().top;
+      mousePressed()
+    }
+  });
+
+  canvas.addEventListener('touchend', () => {
+    if (isDrawing) {
+      isDrawing = false;
+    }
+  }); 
 
   function draw() {
     context.clearRect(0, 0, canvas.width, canvas.height);

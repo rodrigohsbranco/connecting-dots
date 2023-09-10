@@ -2,13 +2,6 @@
 import fullSquare from "../assets/images/squarePicture.png";
 import veryGoodImg from "../assets/images/veryGoodImg.png";
 import nextButton from "../assets/images/nextButton.png";
-// import fullSquare from '../assets/images/0-smile.jpeg'
-// import MuitoBem from '../assets/images/2-veryGood.jpeg'
-// import Proxima from '../assets/images/1-proxima.jpeg'
-
-// import fullSquare from '../assets/images/0-smile.jpeg'
-// import MuitoBem from '../assets/images/2-veryGood.jpeg'
-// import Proxima from '../assets/images/1-proxima.jpeg'
 
 import { onMounted, ref } from "vue";
 import shapeGameSquareBg from "../assets/images/shapeGameSquareBg.png";
@@ -80,7 +73,10 @@ onMounted(() => {
     );
   }
 
-  canvas.addEventListener("mousedown", (event) => {
+  let isDrawing = false;
+
+  canvas.addEventListener("pointerdown", (event) => {
+    isDrawing = true;
     currentPos.x = event.clientX - canvas.getBoundingClientRect().left;
     currentPos.y = event.clientY - canvas.getBoundingClientRect().top;
     mousePressed();
@@ -89,6 +85,41 @@ onMounted(() => {
   canvas.addEventListener("mousemove", (event) => {
     currentPos.x = event.clientX - canvas.getBoundingClientRect().left;
     currentPos.y = event.clientY - canvas.getBoundingClientRect().top;
+  });
+
+  canvas.addEventListener("pointermove", (event) => {
+    if (isDrawing) {
+      currentPos.x = event.clientX - canvas.getBoundingClientRect().left;
+      currentPos.y = event.clientY - canvas.getBoundingClientRect().top;
+      mousePressed()
+    }
+  });
+
+  canvas.addEventListener("pointerup", () => {
+    isDrawing = false;
+  });
+
+  canvas.addEventListener('touchstart', (event) => {
+    isDrawing = true;
+    const touch = event.touches[0];
+    currentPos.x = touch.clientX - canvas.getBoundingClientRect().left;
+    currentPos.y = touch.clientY - canvas.getBoundingClientRect().top;
+    mousePressed();
+  });
+
+  canvas.addEventListener('touchmove', (event) => {
+    if (isDrawing) {
+      const touch = event.touches[0];
+      currentPos.x = touch.clientX - canvas.getBoundingClientRect().left;
+      currentPos.y = touch.clientY - canvas.getBoundingClientRect().top;
+      mousePressed()
+    }
+  });
+
+  canvas.addEventListener('touchend', () => {
+    if (isDrawing) {
+      isDrawing = false;
+    }
   });
 
   function draw() {
