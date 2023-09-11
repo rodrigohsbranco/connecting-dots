@@ -4,7 +4,7 @@ import veryGoodImg from "../assets/images/veryGoodImg.png";
 import nextButton from "../assets/images/nextButton.png";
 
 import { onMounted, ref } from "vue";
-import shapeGameSquareBg from "../assets/images/shapeGameSquareBg.png";
+import shapeGameBg from "../assets/images/shapeGameBg.png";
 import numberSquare from "../assets/images/numbers/square.png";
 
 import BackButton from "../components/BackButton.vue";
@@ -163,8 +163,9 @@ onMounted(() => {
   canvas.addEventListener('touchmove', (event) => {
     if (isDrawing) {
       const touch = event.touches[0];
-      currentPos.x = touch.clientX - canvas.getBoundingClientRect().left;
-      currentPos.y = touch.clientY - canvas.getBoundingClientRect().top;
+      currentPos.x = touch.clientX - canvas.getBoundingClientRect().left
+      currentPos.y = touch.clientY - canvas.getBoundingClientRect().top
+
       mousePressed()
     }
   });
@@ -214,7 +215,7 @@ onMounted(() => {
   function fillVertex(ctx) {
     ctx.strokeStyle = "rgb(90, 90, 90)";
     ctx.fillStyle = "rgb(226, 126, 110)";
-    ctx.lineWidth = 2; // Especifique a largura da linha aqui
+    ctx.lineWidth = 2;
     ctx.beginPath();
     for (let i = 0; i < dots.length; i++) {
       ctx.lineTo(dots[i].x, dots[i].y);
@@ -251,7 +252,7 @@ onMounted(() => {
 
 <template>
   <div class="square">
-    <img :src="shapeGameSquareBg" class='img-background' alt="Descrição da imagem">
+    <img :src="shapeGameBg" class='img-background' alt="Descrição da imagem">
     <img :src="numberSquare" class='numbers' alt="numbers">
 
     <BackButton :name="pageRoute" />
@@ -309,10 +310,9 @@ onMounted(() => {
 
 .veryGood {
   position: absolute;
-  top:7rem;
-  width: 100vw;
-  margin: auto;
-  left: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: none;
   z-index: 1000;
   place-items: center;
@@ -328,8 +328,8 @@ onMounted(() => {
   object-fit: cover;
 }
 .veryGood article img {
-  width: 28rem;
-  height: 25rem;
+  width: 30rem;
+  height: 27rem;
   border-radius: 0.5rem;
 }
 
@@ -337,14 +337,15 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 580px;
+  gap:1rem;
+  width: 600px;
   position: relative;
-  left: 4rem;
+  left: 3.5rem;
   top: -1rem;
 }
 
 .veryGood div img:first-child {
-  width: 29rem;
+  width: 33rem;
 }
 
 .veryGood div img:last-child {
@@ -354,6 +355,89 @@ onMounted(() => {
 
 .veryGood__text {
   margin-top: -1rem;
+}
+
+@media (max-width:800px), (max-height:480px) {
+
+  .veryGood img {
+    object-fit: cover;
+  }
+  .veryGood article img {
+    width: 22rem;
+    height: 19rem;
+  }
+
+  .veryGood div {
+    width: 460px;
+    left: 3rem;
+    top: -1rem;
+  }
+
+  .veryGood div img:first-child {
+    width: 23rem;
+  }
+}
+
+@media (max-width:583px), (max-height:360px) {
+  .veryGood {
+    width:100vw;
+  }
+  .veryGood article img {
+    width: 19rem;
+    height: 16rem;
+  }
+
+  .veryGood div {
+    width: 21rem;
+    top: -1rem;
+    left:0%;
+  }
+
+  .veryGood div img:first-child {
+    width: 100%;
+  }
+
+  .veryGood div img:last-child {
+    position:absolute;
+    right:1rem;
+    top:5rem;
+    border-radius:.5rem;
+    width:4rem;
+  }
+}
+
+@media (max-height:360px) {
+  .veryGood div img:last-child {
+    right:-4.5rem !important;
+    top:.5rem !important;
+    width:4rem !important;
+  }
+}
+
+@media (max-width:340px), (max-height:270px) {
+  .veryGood article img {
+    width: 15rem;
+    height: 12rem;
+  }
+
+  .veryGood div {
+    width: 16rem;
+    top: 0rem;
+    left:0%;
+  }
+  .veryGood div img:last-child {
+    right:.5rem;
+    top:4rem;
+    width:3.5rem;
+  }
+}
+
+@media (max-height:270px) {
+  .veryGood div img:last-child {
+    right:-3.5rem !important;
+    top:.5rem !important;
+    width:3rem !important;
+  }
 }
 
 @media (max-width:640px) {
@@ -385,10 +469,9 @@ onMounted(() => {
 
 @media (max-height:305px) {
   .numbers {
-    width:18rem;
+    width:18.5rem;
     height:14.5rem;
     margin-left:.25rem;
-    margin-top:-1.8rem;
   }
 }
 
