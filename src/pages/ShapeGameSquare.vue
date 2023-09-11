@@ -5,6 +5,8 @@ import nextButton from "../assets/images/nextButton.png";
 
 import { onMounted, ref } from "vue";
 import shapeGameSquareBg from "../assets/images/shapeGameSquareBg.png";
+import numberSquare from "../assets/images/numbers/square.png";
+
 import BackButton from "../components/BackButton.vue";
 import HomeButton from "../components/HomeButton.vue";
 import { useRouter } from "vue-router";
@@ -24,14 +26,6 @@ let lastPos = { x: 100, y: 160 };
 let currentPos = { x: 100, y: 160 };
 let dotSize = 12;
 
-const guidePoints = [
-  { x: 21, y: 40 },
-  { x: 400, y: 40 },
-  { x: 400, y: 385 },
-  { x: 23, y: 385 },
-  { x: 21, y: 40 },
-];
-
 class Dot {
   constructor(x, y, strokeColor) {
     this.x = x;
@@ -40,7 +34,7 @@ class Dot {
   }
   connect(px, py, ctx) {
     ctx.strokeStyle = this.strokeColor;
-    ctx.lineWidth = 10; // Especifique a largura da linha aqui
+    ctx.lineWidth = 10;
     ctx.beginPath();
     ctx.moveTo(this.x, this.y);
     ctx.lineTo(px, py);
@@ -49,7 +43,7 @@ class Dot {
   plot(ctx) {
     ctx.fillStyle = "rgb(226, 126, 110)";
     ctx.strokeStyle = this.strokeColor;
-    ctx.lineWidth = 3; // Especifique a largura da borda aqui
+    ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(this.x, this.y, dotSize, 0, Math.PI * 2);
     ctx.fill();
@@ -64,14 +58,73 @@ class Dot {
 onMounted(() => {
   const canvas = document.getElementById("dots");
   const context = canvas.getContext("2d");
-  canvas.width = 420;
-  canvas.height = 420;
 
-  for (let i = 0; i < guidePoints.length; i++) {
-    guideDots.push(
-      new Dot(guidePoints[i].x, guidePoints[i].y, "rgb(120, 120, 120)")
-    );
+  resizeCanvas();
+  function resizeCanvas() {
+
+    const maxWidth = 640,
+          maxHeight = 464;
+
+    const heightMin = 305,
+          widthMin = 365;
+
+    let guidePoints = [
+      { x: 21, y: 40 },
+      { x: 400, y: 40 },
+      { x: 400, y: 385 },
+      { x: 23, y: 385 },
+      { x: 21, y: 40 },
+    ]
+
+    let scaleFactorX, scaleFactorY;
+
+    if (window.innerWidth <= maxWidth && window.innerWidth > widthMin) {
+      canvas.width = 350;
+      canvas.height = 350;
+    } 
+    else if (window.innerWidth <= widthMin) {
+      canvas.width = 290;
+      canvas.height = 290;
+    }
+    else if (window.innerHeight <= maxHeight && window.innerHeight > heightMin) {
+      canvas.width = 300;
+      canvas.height = 300;
+      
+      document.querySelector('#dots').style.top = '0rem';
+    }
+    else if (window.innerHeight <= heightMin) {
+      canvas.width = 250;
+      canvas.height = 250;
+    }
+    else {
+      canvas.width = 420;
+      canvas.height = 420;
+    }
+
+    scaleFactorX = canvas.width / 420;
+    scaleFactorY = canvas.height / 420;
+
+    guideDots = [];
+    for (let i = 0; i < guidePoints.length; i++) {
+      guidePoints[i].x *= scaleFactorX;
+      guidePoints[i].y *= scaleFactorY;
+    }
+
+    redrawCanvas();
+    draw();
+
+    for (let i = 0; i < guidePoints.length; i++) {
+      guideDots.push(
+        new Dot(guidePoints[i].x, guidePoints[i].y, "rgba(26,27,28,.7)")
+      );
+    }
   }
+
+  function redrawCanvas() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  window.addEventListener("resize", resizeCanvas);
 
   let isDrawing = false;
 
@@ -185,6 +238,8 @@ onMounted(() => {
         dots.push(new Dot(guideDots[0].x, guideDots[0].y, "#E27E6E"));
         document.querySelector(".veryGood").classList.add("active");
         document.querySelector(".canvasShow").style.display = "none";
+        document.querySelector("#dots").style.display = "none";
+        document.querySelector(".numbers").style.display = "none";
         drawingCompleted = true;
       }
     }
@@ -195,7 +250,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="square" :style="{ backgroundImage: `url(${shapeGameSquareBg})` }">
+  <div class="square">
+    <img :src="shapeGameSquareBg" class='img-background' alt="Descrição da imagem">
+    <img :src="numberSquare" class='numbers' alt="numbers">
+
     <BackButton :name="pageRoute" />
     <!-- <HomeButton /> -->
     <canvas class="canvasShow" id="dots"></canvas>
@@ -220,22 +278,38 @@ onMounted(() => {
 <style scoped>
 .square {
   height: 100vh;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover;
+  width:100vw;
   overflow: hidden;
   display: grid;
   place-items: center;
 }
+
+.img-background {
+  position:absolute;
+  top:0;
+  left:0;
+  object-fit:cover;
+  width:100vw;
+  height:100vh;
+}
+
+.numbers {
+  position:absolute;
+  width:25.5rem;
+  height:29rem;
+  margin-left:.5rem;
+  margin-top:-2.5rem;
+}
+
 #dots {
   z-index: 1000;
   position: relative;
-  top: 3.3rem;
+  top:-1rem;
 }
 
 .veryGood {
   position: absolute;
-  top: 10rem;
+  top:7rem;
   width: 100vw;
   margin: auto;
   left: 0;
@@ -282,17 +356,42 @@ onMounted(() => {
   margin-top: -1rem;
 }
 
-/* @keyframes just-appear {
-  from {
-    opacity:0;
-    transform:translateY(-2rem);
+@media (max-width:640px) {
+  .numbers {
+    width:24rem;
+    height:20.25rem;
+    margin-left:.5rem;
+    margin-top:-2.25rem;
   }
+}
 
-  to {
-    opacity:1;
-    transform:translateY(0);
+@media (max-width:365px) {
+  .numbers {
+    width:17.5rem;
+    height:20.25rem;
+    margin-left:0rem;
+    margin-top:-2.25rem;
   }
-} */
+}
+
+@media (max-height:465px) {
+  .numbers {
+    width:18rem;
+    height:21rem;
+    margin-left:.25rem;
+    margin-top:-.25rem;
+  }
+}
+
+@media (max-height:305px) {
+  .numbers {
+    width:18rem;
+    height:14.5rem;
+    margin-left:.25rem;
+    margin-top:-1.8rem;
+  }
+}
+
 @keyframes just-appear {
   from {
     opacity: 0;
