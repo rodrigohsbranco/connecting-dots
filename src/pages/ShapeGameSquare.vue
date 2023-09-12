@@ -1,6 +1,8 @@
 <script setup>
 import fullSquare from "../assets/images/squarePicture.png";
 import veryGoodImg from "../assets/images/veryGoodImg.png";
+
+import arrow from "../assets/images/0-arrow.png";
 import nextButton from "../assets/images/nextButton.png";
 
 import { onMounted, ref } from "vue";
@@ -241,6 +243,7 @@ onMounted(() => {
         document.querySelector(".canvasShow").style.display = "none";
         document.querySelector("#dots").style.display = "none";
         document.querySelector(".numbers").style.display = "none";
+        document.querySelector(".arrow").style.display = "none";
         drawingCompleted = true;
       }
     }
@@ -254,6 +257,7 @@ onMounted(() => {
   <div class="square">
     <img :src="shapeGameBg" class='img-background' alt="Descrição da imagem">
     <img :src="numberSquare" class='numbers' alt="numbers">
+    <img :src='arrow' class="arrow">
 
     <BackButton :name="pageRoute" />
     <!-- <HomeButton /> -->
@@ -342,6 +346,31 @@ onMounted(() => {
   position: relative;
   left: 3.5rem;
   top: -1rem;
+}
+
+.arrow {
+  position:absolute;
+  margin-top:-31rem;
+  width:8rem;
+  margin-left:-38rem;
+  animation:code 3s linear infinite;
+}
+
+@keyframes code {
+  0% {
+    opacity: .7;
+    transform:scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform:scale(1.1);
+  }
+
+  100% {
+    opacity: .7;
+    transform:scale(1);
+  }
 }
 
 .veryGood div img:first-child {
