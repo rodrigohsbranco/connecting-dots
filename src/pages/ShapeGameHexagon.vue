@@ -318,7 +318,7 @@ onMounted(() => {
 
 .veryGood {
   position: absolute;
-  top: 9rem;
+  top: 5rem;
   width: 100vw;
   margin: auto;
   left: 0;
