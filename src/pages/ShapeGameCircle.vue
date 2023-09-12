@@ -358,6 +358,7 @@ onMounted(() => {
 .veryGood {
   position: absolute;
   top: 50%;
+  user-select:none;
   left: 50%;
   transform: translate(-50%, -50%);
   display: none;

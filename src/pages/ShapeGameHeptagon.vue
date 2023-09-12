@@ -2,6 +2,7 @@
 import heptagonPicture from "../assets/images/heptagonPicture.png";
 import veryGoodImg from "../assets/images/veryGoodImg.png";
 import nextButton from "../assets/images/nextButton.png";
+import arrow from "../assets/images/0-arrow.png";
 
 import { onMounted, ref } from "vue";
 import shapeGameBg from "../assets/images/shapeGameBg.png";
@@ -251,6 +252,7 @@ onMounted(() => {
         document.querySelector(".canvasShow").style.display = "none";
         document.querySelector("#dots").style.display = "none";
         document.querySelector(".numbers").style.display = "none";
+        document.querySelector(".arrow").style.display = "none";
         drawingCompleted = true;
       }
     }
@@ -264,6 +266,7 @@ onMounted(() => {
   <div class="heptagon">
     <img :src="shapeGameBg" class='img-background' alt="Descrição da imagem">
     <img :src="numberHeptagon" class='numbers' alt="numbers">
+    <img :src='arrow' class="arrow">
 
     <BackButton :name="pageRoute" />
     <!-- <HomeButton /> -->
@@ -306,6 +309,31 @@ onMounted(() => {
   height:100vh;
 }
 
+.arrow {
+  position:absolute;
+  margin-top:-24rem;
+  width:8rem;
+  margin-left:-35rem;
+  animation:code 3s linear infinite;
+}
+
+@keyframes code {
+  0% {
+    opacity: .7;
+    transform:scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform:scale(1.1);
+  }
+
+  100% {
+    opacity: .7;
+    transform:scale(1);
+  }
+}
+
 .numbers {
   position:absolute;
   width:32rem;
@@ -320,6 +348,7 @@ onMounted(() => {
 .veryGood {
   position: absolute;
   top: 50%;
+  user-select:none;
   left: 50%;
   transform: translate(-50%, -50%);
   display: none;

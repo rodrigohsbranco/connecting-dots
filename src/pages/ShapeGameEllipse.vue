@@ -2,6 +2,7 @@
 import ellipsePicture from "../assets/images/ellipsePicture.png";
 import veryGoodImg from "../assets/images/veryGoodImg.png";
 import nextButton from "../assets/images/nextButton.png";
+import arrow from "../assets/images/0-arrow.png";
 
 import { onMounted, ref } from "vue";
 import shapeGameBg from "../assets/images/shapeGameBg.png";
@@ -247,6 +248,7 @@ onMounted(() => {
         document.querySelector(".canvasShow").style.display = "none";
         document.querySelector("#dots").style.display = "none";
         document.querySelector(".numbers").style.display = "none";
+        document.querySelector(".arrow").style.display = "none";
         drawingCompleted = true;
       }
     }
@@ -260,6 +262,7 @@ onMounted(() => {
   <div class="ellipse">
     <img :src="shapeGameBg" class='img-background' alt="Descrição da imagem">
     <img :src="numberEllipse" class='numbers' alt="numbers">
+    <img :src='arrow' class="arrow">
 
     <BackButton :name="pageRoute" />
     <!-- <HomeButton /> -->
@@ -309,6 +312,31 @@ onMounted(() => {
   margin-top:-2.5rem;
 }
 
+.arrow {
+  position:absolute;
+  margin-top:-10rem;
+  width:6rem;
+  margin-left:-50rem;
+  animation:code 3s linear infinite;
+}
+
+@keyframes code {
+  0% {
+    opacity: .7;
+    transform:scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform:scale(1.1);
+  }
+
+  100% {
+    opacity: .7;
+    transform:scale(1);
+  }
+}
+
 #dots {
   z-index: 900;
   position: relative;
@@ -319,6 +347,7 @@ onMounted(() => {
   position: absolute;
   top: 50%;
   left: 50%;
+  user-select:none;
   transform: translate(-50%, -50%);
   display: none;
   z-index: 1000;

@@ -2,6 +2,7 @@
 import starPicture from "../assets/images/starPicture.png";
 import congratulationsImg from "../assets/images/congratulationsImg.png";
 import nextButton from "../assets/images/nextButton.png";
+import arrow from "../assets/images/0-arrow.png";
 
 import { onMounted, ref } from "vue";
 import shapeGameBg from "../assets/images/shapeGameBg.png";
@@ -256,6 +257,7 @@ onMounted(() => {
         document.querySelector(".canvasShow").style.display = "none";
         document.querySelector("#dots").style.display = "none";
         document.querySelector(".numbers").style.display = "none";
+        document.querySelector(".arrow").style.display = "none";
         drawingCompleted = true;
       }
     }
@@ -269,6 +271,7 @@ onMounted(() => {
   <div class="star">
     <img :src="shapeGameBg" class='img-background' alt="Descrição da imagem">
     <img :src="numberStar" class='numbers' alt="numbers">
+    <img :src='arrow' class="arrow">
 
     <BackButton :name="pageRoute" />
     <!-- <HomeButton /> -->
@@ -311,6 +314,31 @@ onMounted(() => {
   height:100vh;
 }
 
+.arrow {
+  position:absolute;
+  margin-top:15rem;
+  width:6rem;
+  margin-left:29rem;
+  animation:code 3s linear infinite;
+}
+
+@keyframes code {
+  0% {
+    opacity: .7;
+    transform:scale(1) rotate(115deg);
+  }
+
+  50% {
+    opacity: 1;
+    transform:scale(1.1) rotate(115deg);
+  }
+
+  100% {
+    opacity: .7;
+    transform:scale(1) rotate(115deg);
+  }
+}
+
 .numbers {
   position:absolute;
   width:33rem;
@@ -330,6 +358,7 @@ onMounted(() => {
   transform: translate(-50%, -50%);
   display: none;
   z-index: 1000;
+  user-select:none;
   place-items: center;
   height: max-content;
 }

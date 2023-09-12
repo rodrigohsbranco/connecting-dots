@@ -316,6 +316,7 @@ onMounted(() => {
   position: absolute;
   top: 50%;
   left: 50%;
+  user-select:none;
   transform: translate(-50%, -50%);
   display: none;
   z-index: 1000;
