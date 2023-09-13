@@ -19,6 +19,7 @@ html {
 body {
     font-size: 0.79rem;
     font-family: pro_rounded;
+    /* cursor: none; */
 }
 
 /* Classe de display flex */
