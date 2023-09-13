@@ -2,9 +2,11 @@
 import trapezePicture from "../assets/images/trapezePicture.png";
 import veryGoodImg from "../assets/images/veryGoodImg.png";
 import nextButton from "../assets/images/nextButton.png";
+import arrow from "../assets/images/0-arrow.png";
 
 import { onMounted, ref } from "vue";
-import trapezeBg from "../assets/images/trapezeBg.png";
+import shapeGameBg from "../assets/images/shapeGameBg.png";
+import numberTrapeze from "../assets/images/numbers/2-trapeze.png";
 import BackButton from "../components/BackButton.vue";
 import HomeButton from "../components/HomeButton.vue";
 import { useRouter } from "vue-router";
@@ -23,14 +25,6 @@ let drawingCompleted = false;
 let lastPos = { x: 100, y: 160 };
 let currentPos = { x: 100, y: 160 };
 let dotSize = 9;
-
-const guidePoints = [
-  { x: 30, y: 290 },
-  { x: 100, y: 40 },
-  { x: 450, y: 40 },
-  { x: 550, y: 290 },
-  { x: 30, y: 290 },
-];
 
 class Dot {
   constructor(x, y, strokeColor) {
@@ -64,14 +58,84 @@ class Dot {
 onMounted(() => {
   const canvas = document.getElementById("dots");
   const context = canvas.getContext("2d");
-  canvas.width = 580;
-  canvas.height = 420;
+  
+  resizeCanvas();
+  function resizeCanvas() {
 
-  for (let i = 0; i < guidePoints.length; i++) {
-    guideDots.push(
-      new Dot(guidePoints[i].x, guidePoints[i].y, "rgb(120, 120, 120)")
-    );
+    const maxWidth = 640,
+          maxHeight = 464;
+
+    const heightMin = 305,
+          widthMin = 494;
+
+    const heightMicro = 305,
+          widthMicro = 386;
+
+    const guidePoints = [
+      { x: 30, y: 290 },
+      { x: 100, y: 40 },
+      { x: 450, y: 40 },
+      { x: 550, y: 290 },
+      { x: 30, y: 290 },
+    ];
+
+    let scaleFactorX, scaleFactorY;
+
+    if (window.innerWidth <= maxWidth && window.innerWidth > widthMin) {
+      canvas.width = 490;
+      canvas.height = 340;
+    } 
+    else if (window.innerWidth <= widthMin && window.innerWidth > widthMicro) {
+      canvas.width = 370;
+      canvas.height = 220;
+    }
+
+    else if (window.innerHeight <= maxHeight && window.innerHeight > heightMin) {
+      canvas.width = 400;
+      canvas.height = 350;
+      
+      document.querySelector('#dots').style.top = '0rem';
+    }
+
+    else if (window.innerHeight <= heightMin) {
+      canvas.width = 290;
+      canvas.height = 240;
+    }
+
+    else if (window.innerWidth <= widthMicro) {
+      canvas.width = 280;
+      canvas.height = 200;
+    }
+
+    else {
+      canvas.width = 580;
+      canvas.height = 420;
+    }
+
+    scaleFactorX = canvas.width / 580;
+    scaleFactorY = canvas.height / 420;
+
+    guideDots = [];
+    for (let i = 0; i < guidePoints.length; i++) {
+      guidePoints[i].x *= scaleFactorX;
+      guidePoints[i].y *= scaleFactorY;
+    }
+
+    redrawCanvas();
+    draw();
+
+    for (let i = 0; i < guidePoints.length; i++) {
+      guideDots.push(
+        new Dot(guidePoints[i].x, guidePoints[i].y, "rgba(26,27,28,.7)")
+      );
+    }
   }
+
+  function redrawCanvas() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  window.addEventListener("resize", resizeCanvas);
 
   let isDrawing = false;
 
@@ -185,6 +249,9 @@ onMounted(() => {
         dots.push(new Dot(guideDots[0].x, guideDots[0].y, "#E27E6E"));
         document.querySelector(".veryGood").classList.add("active");
         document.querySelector(".canvasShow").style.display = "none";
+        document.querySelector("#dots").style.display = "none";
+        document.querySelector(".numbers").style.display = "none";
+        document.querySelector(".arrow").style.display = "none";
         drawingCompleted = true;
       }
     }
@@ -195,7 +262,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="trapeze" :style="{ backgroundImage: `url(${trapezeBg})` }">
+  <div class="trapeze">
+    <img :src="shapeGameBg" class='img-background' alt="Descrição da imagem">
+    <img :src="numberTrapeze" class='numbers' alt="numbers">
+    <img :src='arrow' class="arrow">
+
     <BackButton :name="pageRoute" />
     <!-- <HomeButton /> -->
     <canvas class="canvasShow" id="dots"></canvas>
@@ -227,18 +298,58 @@ onMounted(() => {
   display: grid;
   place-items: center;
 }
+
+.img-background {
+  position:absolute;
+  top:0;
+  left:0;
+  object-fit:cover;
+  width:100vw;
+  height:100vh;
+}
+
+.numbers {
+  position:absolute;
+  width:30rem;
+  margin-top:-4rem;
+}
+
+.arrow {
+  position:absolute;
+  margin-top:-28rem;
+  width:8rem;
+  margin-left:-36rem;
+  animation:code 3s linear infinite;
+}
+
+@keyframes code {
+  0% {
+    opacity: .7;
+    transform:scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform:scale(1.1);
+  }
+
+  100% {
+    opacity: .7;
+    transform:scale(1);
+  }
+}
+
 #dots {
   z-index: 900;
   position: relative;
-  top: 3.3rem;
 }
 
 .veryGood {
   position: absolute;
-  top: 8rem;
-  width: 100vw;
-  margin: auto;
-  left: 0;
+  top: 50%;
+  user-select:none;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: none;
   z-index: 1000;
   place-items: center;
@@ -274,7 +385,107 @@ onMounted(() => {
 }
 
 .veryGood__text {
-  margin-top: -1rem;
+  margin-top: -4rem;
+}
+
+@media (max-width:736px), (max-height:386px) {
+.veryGood article img {
+  width:23rem;
+  height: 16rem;
+}
+
+.veryGood div {
+  width: 21rem;
+  top: -1rem;
+  left:0%;
+}
+
+.veryGood div img:first-child {
+  width: 100%;
+}
+
+.veryGood div img:last-child {
+  position:absolute;
+  right:1rem;
+  top:5rem;
+  border-radius:.5rem;
+  width:4rem;
+}
+}
+
+@media (max-height:386px) {
+.veryGood div img:last-child {
+  right:-4.5rem !important;
+  top:.5rem !important;
+  width:4rem !important;
+}
+}
+
+@media (max-width:350px), (max-height:270px) {
+.veryGood article img {
+  height: 12rem;
+}
+
+.veryGood div {
+  width: 16rem;
+  top: 0rem;
+  left:0%;
+}
+.veryGood div img:last-child {
+  right:.5rem;
+  top:4rem;
+  width:3.5rem;
+}
+}
+
+@media (max-height:270px) {
+.veryGood div img:last-child {
+  right:-3.5rem !important;
+  top:.5rem !important;
+  width:3rem !important;
+}
+}
+
+@media (max-width:640px) {
+  .numbers {
+    width:24rem;
+    margin-left:-1.5rem;
+    margin-top:-3rem;
+  }
+}
+
+@media (max-width:494px) {
+.numbers {
+  width:20rem;
+  height:9rem;
+  margin-left:.25rem;
+  margin-top:-1rem;
+}
+}
+
+@media (max-width:386px) {
+.numbers {
+  width:15rem;
+  height:9rem;
+  margin-left:.25rem;
+  margin-top:-.25rem;
+}
+}
+
+@media (max-height:465px) {
+.numbers {
+  width:21rem;
+  margin-left:0rem;
+  margin-top:-3rem;
+}
+}
+
+@media (max-height:305px) {
+.numbers {
+  width:15rem;
+  margin-top:-2.5rem;
+  margin-left:.25rem;
+}
 }
 
 @keyframes just-appear {

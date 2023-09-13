@@ -2,9 +2,11 @@
 import hexagonPicture from "../assets/images/hexagonPicture.png";
 import veryGoodImg from "../assets/images/veryGoodImg.png";
 import nextButton from "../assets/images/nextButton.png";
+import arrow from "../assets/images/0-arrow.png";
 
 import { onMounted, ref } from "vue";
-import hexagonBg from "../assets/images/hexagonBg.png";
+import shapeGameBg from "../assets/images/shapeGameBg.png";
+import numberHexa from "../assets/images/numbers/6-hexagon.png";
 import BackButton from "../components/BackButton.vue";
 import HomeButton from "../components/HomeButton.vue";
 import { useRouter } from "vue-router";
@@ -23,16 +25,6 @@ let drawingCompleted = false;
 let lastPos = { x: 100, y: 160 };
 let currentPos = { x: 100, y: 160 };
 let dotSize = 9;
-
-const guidePoints = [
-  { x: 87, y: 235 },
-  { x: 198, y: 35 },
-  { x: 430, y: 35 },
-  { x: 543, y: 235 },
-  { x: 430, y: 430 },
-  { x: 198, y: 430 },
-  { x: 87, y: 235 },
-];
 
 class Dot {
   constructor(x, y, strokeColor) {
@@ -66,14 +58,84 @@ class Dot {
 onMounted(() => {
   const canvas = document.getElementById("dots");
   const context = canvas.getContext("2d");
-  canvas.width = 630;
-  canvas.height = 500;
 
-  for (let i = 0; i < guidePoints.length; i++) {
-    guideDots.push(
-      new Dot(guidePoints[i].x, guidePoints[i].y, "rgb(120, 120, 120)")
-    );
+  resizeCanvas();
+  function resizeCanvas() {
+
+    const maxWidth = 640,
+          maxHeight = 464;
+
+    const heightMin = 380,
+          widthMin = 430
+
+    const heightMicro = 270,
+          widthMicro = 362
+
+    const guidePoints = [
+      { x: 87, y: 235 },
+      { x: 198, y: 35 },
+      { x: 430, y: 35 },
+      { x: 543, y: 235 },
+      { x: 430, y: 430 },
+      { x: 198, y: 430 },
+      { x: 87, y: 235 },
+    ];
+
+    let scaleFactorX, scaleFactorY;
+
+    if (window.innerWidth <= maxWidth && window.innerWidth > widthMin) {
+      canvas.width = 450;
+      canvas.height = 370;
+    } 
+    else if (window.innerWidth <= widthMin && window.innerWidth > widthMicro) {
+      canvas.width = 350;
+      canvas.height = 270;
+    }
+    else if (window.innerHeight <= maxHeight && window.innerHeight > heightMin) {
+      canvas.width = 470;
+      canvas.height = 390;
+      
+      document.querySelector('#dots').style.top = '0rem';
+    }
+
+    else if (window.innerWidth <= widthMicro) {
+      canvas.width = 280;
+      canvas.height = 210;
+    }
+
+    else if (window.innerHeight <= heightMin) {
+      canvas.width = 350;
+      canvas.height = 270;
+    }
+    else {
+      canvas.width = 630;
+      canvas.height = 500;
+    }
+
+    scaleFactorX = canvas.width / 630;
+    scaleFactorY = canvas.height / 500;
+
+    guideDots = [];
+    for (let i = 0; i < guidePoints.length; i++) {
+      guidePoints[i].x *= scaleFactorX;
+      guidePoints[i].y *= scaleFactorY;
+    }
+
+    redrawCanvas();
+    draw();
+
+    for (let i = 0; i < guidePoints.length; i++) {
+      guideDots.push(
+        new Dot(guidePoints[i].x, guidePoints[i].y, "rgba(26,27,28,.7)")
+      );
+    }
   }
+
+  function redrawCanvas() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  window.addEventListener("resize", resizeCanvas);
 
   let isDrawing = false;
 
@@ -187,6 +249,9 @@ onMounted(() => {
         dots.push(new Dot(guideDots[0].x, guideDots[0].y, "#E27E6E"));
         document.querySelector(".veryGood").classList.add("active");
         document.querySelector(".canvasShow").style.display = "none";
+        document.querySelector("#dots").style.display = "none";
+        document.querySelector(".numbers").style.display = "none";
+        document.querySelector(".arrow").style.display = "none";
         drawingCompleted = true;
       }
     }
@@ -197,7 +262,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="hexagon" :style="{ backgroundImage: `url(${hexagonBg})` }">
+  <div class="hexagon">
+    <img :src="shapeGameBg" class='img-background' alt="Descrição da imagem">
+    <img :src="numberHexa" class='numbers' alt="numbers">
+    <img :src='arrow' class="arrow">
+
     <BackButton :name="pageRoute" />
     <!-- <HomeButton /> -->
     <canvas class="canvasShow" id="dots"></canvas>
@@ -229,15 +298,56 @@ onMounted(() => {
   display: grid;
   place-items: center;
 }
+
+.img-background {
+  position:absolute;
+  top:0;
+  left:0;
+  object-fit:cover;
+  width:100vw;
+  height:100vh;
+}
+
+.numbers {
+  position:absolute;
+  width:34rem;
+}
+
+.arrow {
+  position:absolute;
+  margin-top:-9rem;
+  width:8rem;
+  margin-left:-45rem;
+  animation:code 3s linear infinite;
+}
+
+@keyframes code {
+  0% {
+    opacity: .7;
+    transform:scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform:scale(1.1);
+  }
+
+  100% {
+    opacity: .7;
+    transform:scale(1);
+  }
+}
+
 #dots {
   z-index: 900;
   position: relative;
-  top: 3.3rem;
+  top:1rem;
 }
 
 .veryGood {
+  user-select:none;
   position: absolute;
-  top: 9rem;
+  top: 5rem;
   width: 100vw;
   margin: auto;
   left: 0;
@@ -277,6 +387,124 @@ onMounted(() => {
 
 .veryGood__text {
   margin-top: -2rem;
+}
+
+@media (max-width:800px), (max-height:500px) {
+
+.veryGood img {
+  object-fit: cover;
+}
+.veryGood article img {
+  width: 22rem;
+  height: 22rem;
+}
+
+.veryGood div {
+  width: 460px;
+  left: 3rem;
+  top: -1rem;
+}
+
+.veryGood div img:first-child {
+  width: 23rem;
+}
+}
+
+@media (max-width:583px), (max-height:387px) {
+.veryGood article img {
+  width: 19rem;
+  height: 18rem;
+}
+
+.veryGood div {
+  width: 21rem;
+  top: 1rem;
+  left:0%;
+}
+
+.veryGood div img:first-child {
+  width: 100%;
+}
+
+.veryGood div img:last-child {
+  position:absolute;
+  right:1rem;
+  top:5rem;
+  border-radius:.5rem;
+  width:4rem;
+}
+}
+
+@media (max-height:387px) {
+.veryGood div img:last-child {
+  right:-4.5rem !important;
+  top:.5rem !important;
+  width:4rem !important;
+}
+}
+
+@media (max-width:340px), (max-height:350px) {
+.veryGood article img {
+  width: 15rem;
+  height: 14rem;
+}
+
+.veryGood div {
+  width: 16rem;
+  top: 1rem;
+  left:0%;
+}
+.veryGood div img:last-child {
+  right:.5rem;
+  top:4rem;
+  width:3.5rem;
+}
+}
+
+@media (max-height:350px) {
+.veryGood div img:last-child {
+  right:-3.5rem !important;
+  top:.5rem !important;
+  width:3rem !important;
+}
+}
+
+@media (max-width:640px) {
+  .numbers {
+    width:17rem;
+    margin-left:0rem;
+    margin-top:-.75rem;
+  }
+}
+
+@media (max-width:430px) {
+.numbers {
+  margin-top:1rem;
+  width:13rem;
+}
+}
+
+@media (max-width:362px) {
+.numbers {
+  margin-top:0;
+  width:9rem;
+}
+}
+
+@media (max-height:463px) {
+.numbers {
+  width:19rem;
+  margin-left:.25rem;
+  margin-top:-2rem;
+}
+}
+
+@media (max-height:305px) {
+.numbers {
+  width:12rem;
+  margin-top:0rem;
+  margin-left:.25rem;
+}
 }
 
 @keyframes just-appear {

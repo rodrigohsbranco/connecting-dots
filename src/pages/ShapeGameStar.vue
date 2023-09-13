@@ -2,9 +2,11 @@
 import starPicture from "../assets/images/starPicture.png";
 import congratulationsImg from "../assets/images/congratulationsImg.png";
 import nextButton from "../assets/images/nextButton.png";
+import arrow from "../assets/images/0-arrow.png";
 
 import { onMounted, ref } from "vue";
-import starBg from "../assets/images/starBg.png";
+import shapeGameBg from "../assets/images/shapeGameBg.png";
+import numberStar from "../assets/images/numbers/8-star.png";
 import BackButton from "../components/BackButton.vue";
 import HomeButton from "../components/HomeButton.vue";
 import { useRouter } from "vue-router";
@@ -23,20 +25,6 @@ let drawingCompleted = false;
 let lastPos = { x: 100, y: 160 };
 let currentPos = { x: 100, y: 160 };
 let dotSize = 9;
-
-const guidePoints = [
-  { x: 445, y: 440 },
-  { x: 425, y: 295 },
-  { x: 522, y: 195 },
-  { x: 380, y: 167 },
-  { x: 315, y: 35 },
-  { x: 250, y: 167 },
-  { x: 105, y: 195 },
-  { x: 207, y: 295 },
-  { x: 185, y: 440 },
-  { x: 315, y: 375 },
-  { x: 445, y: 440 },
-];
 
 class Dot {
   constructor(x, y, strokeColor) {
@@ -73,11 +61,87 @@ onMounted(() => {
   canvas.width = 630;
   canvas.height = 500;
 
-  for (let i = 0; i < guidePoints.length; i++) {
-    guideDots.push(
-      new Dot(guidePoints[i].x, guidePoints[i].y, "rgb(120, 120, 120)")
-    );
+  resizeCanvas();
+  function resizeCanvas() {
+
+    const maxWidth = 640,
+          maxHeight = 464;
+
+    const heightMin = 380,
+          widthMin = 430
+
+    const heightMicro = 270,
+          widthMicro = 362
+
+    const guidePoints = [
+      { x: 445, y: 440 },
+      { x: 425, y: 295 },
+      { x: 522, y: 195 },
+      { x: 380, y: 167 },
+      { x: 315, y: 35 },
+      { x: 250, y: 167 },
+      { x: 105, y: 195 },
+      { x: 207, y: 295 },
+      { x: 185, y: 440 },
+      { x: 315, y: 375 },
+      { x: 445, y: 440 },
+    ];
+
+    let scaleFactorX, scaleFactorY;
+
+    if (window.innerWidth <= maxWidth && window.innerWidth > widthMin) {
+      canvas.width = 450;
+      canvas.height = 370;
+    } 
+    else if (window.innerWidth <= widthMin && window.innerWidth > widthMicro) {
+      canvas.width = 350;
+      canvas.height = 270;
+    }
+    else if (window.innerHeight <= maxHeight && window.innerHeight > heightMin) {
+      canvas.width = 470;
+      canvas.height = 390;
+      
+      document.querySelector('#dots').style.top = '0rem';
+    }
+
+    else if (window.innerWidth <= widthMicro) {
+      canvas.width = 280;
+      canvas.height = 210;
+    }
+
+    else if (window.innerHeight <= heightMin) {
+      canvas.width = 350;
+      canvas.height = 270;
+    }
+    else {
+      canvas.width = 630;
+      canvas.height = 500;
+    }
+
+    scaleFactorX = canvas.width / 630;
+    scaleFactorY = canvas.height / 500;
+
+    guideDots = [];
+    for (let i = 0; i < guidePoints.length; i++) {
+      guidePoints[i].x *= scaleFactorX;
+      guidePoints[i].y *= scaleFactorY;
+    }
+
+    redrawCanvas();
+    draw();
+
+    for (let i = 0; i < guidePoints.length; i++) {
+      guideDots.push(
+        new Dot(guidePoints[i].x, guidePoints[i].y, "rgba(26,27,28,.7)")
+      );
+    }
   }
+
+  function redrawCanvas() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  window.addEventListener("resize", resizeCanvas);
 
   let isDrawing = false;
 
@@ -189,8 +253,11 @@ onMounted(() => {
 
       if (currentIndex === guideDots.length) {
         dots.push(new Dot(guideDots[0].x, guideDots[0].y, "#E27E6E"));
-        document.querySelector(".congratulations").classList.add("active");
+        document.querySelector(".veryGood").classList.add("active");
         document.querySelector(".canvasShow").style.display = "none";
+        document.querySelector("#dots").style.display = "none";
+        document.querySelector(".numbers").style.display = "none";
+        document.querySelector(".arrow").style.display = "none";
         drawingCompleted = true;
       }
     }
@@ -201,17 +268,21 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="star" :style="{ backgroundImage: `url(${starBg})` }">
+  <div class="star">
+    <img :src="shapeGameBg" class='img-background' alt="Descrição da imagem">
+    <img :src="numberStar" class='numbers' alt="numbers">
+    <img :src='arrow' class="arrow">
+
     <BackButton :name="pageRoute" />
     <!-- <HomeButton /> -->
     <canvas class="canvasShow" id="dots"></canvas>
 
-    <section class="congratulations">
+    <section class="veryGood">
       <article>
         <img :src="starPicture" alt="Forma de Estrela completa" />
       </article>
 
-      <div class="congratulations__text">
+      <div class="veryGood__text">
         <img :src="congratulationsImg" alt="Parabéns!" />
         <img
           @click="nextShape('/GameModes')"
@@ -233,34 +304,75 @@ onMounted(() => {
   display: grid;
   place-items: center;
 }
+
+.img-background {
+  position:absolute;
+  top:0;
+  left:0;
+  object-fit:cover;
+  width:100vw;
+  height:100vh;
+}
+
+.arrow {
+  position:absolute;
+  margin-top:15rem;
+  width:6rem;
+  margin-left:29rem;
+  animation:code 3s linear infinite;
+}
+
+@keyframes code {
+  0% {
+    opacity: .7;
+    transform:scale(1) rotate(115deg);
+  }
+
+  50% {
+    opacity: 1;
+    transform:scale(1.1) rotate(115deg);
+  }
+
+  100% {
+    opacity: .7;
+    transform:scale(1) rotate(115deg);
+  }
+}
+
+.numbers {
+  position:absolute;
+  width:33rem;
+  top:2.6rem;
+}
+
 #dots {
   z-index: 900;
   position: relative;
-  top: 3.3rem;
+  top:.5rem;
 }
 
-.congratulations {
+.veryGood {
   position: absolute;
-  top: 8rem;
-  width: 100vw;
-  margin: auto;
-  left: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: none;
   z-index: 1000;
+  user-select:none;
   place-items: center;
   height: max-content;
 }
 
-.congratulations.active {
+.veryGood.active {
   display: grid;
   animation: just-appear 0.3s linear forwards;
 }
 
-.congratulations img {
+.veryGood img {
   object-fit: cover;
 }
 
-.congratulations div {
+.veryGood div {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -270,17 +382,142 @@ onMounted(() => {
   top: -1rem;
 }
 
-.congratulations div img:first-child {
+.veryGood div img:first-child {
   width: 29rem;
 }
 
-.congratulations div img:last-child {
+.veryGood div img:last-child {
   cursor: pointer;
   border-radius: 1rem;
 }
 
-.congratulations__text {
+.veryGood__text {
   margin-top: -4rem;
+}
+
+@media (max-width:800px), (max-height:500px) {
+
+.veryGood img {
+  object-fit: cover;
+}
+.veryGood article img {
+  width: 22rem;
+  height: 22rem;
+}
+
+.veryGood div {
+  width: 460px;
+  left: 3rem;
+  top: -1rem;
+}
+
+.veryGood div img:first-child {
+  width: 23rem;
+}
+}
+
+@media (max-width:583px), (max-height:387px) {
+.veryGood article img {
+  width: 19rem;
+  height: 18rem;
+}
+
+.veryGood div {
+  width: 21rem;
+  top: 1rem;
+  left:0%;
+}
+
+.veryGood div img:first-child {
+  width: 100%;
+}
+
+.veryGood div img:last-child {
+  position:absolute;
+  right:1rem;
+  top:5rem;
+  border-radius:.5rem;
+  width:4rem;
+}
+}
+
+@media (max-height:387px) {
+.veryGood div img:last-child {
+  right:-4.5rem !important;
+  top:.5rem !important;
+  width:4rem !important;
+}
+}
+
+@media (max-width:340px), (max-height:350px) {
+.veryGood article img {
+  width: 15rem;
+  height: 14rem;
+}
+
+.veryGood div {
+  width: 16rem;
+  top: 1rem;
+  left:0%;
+}
+.veryGood div img:last-child {
+  right:.5rem;
+  top:4rem;
+  width:3.5rem;
+}
+}
+
+@media (max-height:350px) {
+.veryGood div img:last-child {
+  right:-3.5rem !important;
+  top:.5rem !important;
+  width:3rem !important;
+}
+}
+
+@media (max-width:640px) {
+  .numbers {
+    width:17rem;
+    margin-left:0rem;
+    margin-top:8rem;
+  }
+}
+
+@media (max-width:414px) {
+.numbers {
+  width:11rem;
+}
+}
+
+@media (max-width:362px) {
+.numbers {
+  margin-top:12rem;
+  width:9rem;
+}
+}
+
+@media (max-height:552px) {
+.numbers {
+  width:19rem;
+  margin-left:.25rem;
+  margin-top:6rem;
+}
+}
+
+@media (max-height:456px) {
+.numbers {
+  width:15rem;
+ 
+  margin-left:.25rem;
+}
+}
+
+@media (max-height:367px) {
+.numbers {
+  width:15rem;
+  margin-top:-1rem;
+  margin-left:.25rem;
+}
 }
 
 @keyframes just-appear {
