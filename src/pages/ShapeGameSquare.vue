@@ -41,8 +41,8 @@ class Dot {
     this.strokeColor = strokeColor;
     this.isPulsating = false; // Flag para indicar se o ponto deve pulsar
     this.scale = 1; // Escala inicial
-    this.scaleDirection = 1; // Direção da escala (1 para aumentar, -1 para diminuir)
-    this.pulseSpeed = 0.004 // Velocidade da pulsação
+    this.scaleDirection = 1; 
+    this.pulseSpeed = 0.01
   }
   connect(px, py, ctx) {
     ctx.strokeStyle = this.strokeColor;
@@ -83,7 +83,7 @@ class Dot {
     this.scale += this.scaleDirection * this.pulseSpeed;
 
     // Inverte a direção da escala quando atingir os limites
-    if (this.scale <= 1 || this.scale >= 1.2) {
+    if (this.scale <= 1 || this.scale >= 1.3) {
       this.scaleDirection *= -1;
     }
   }
