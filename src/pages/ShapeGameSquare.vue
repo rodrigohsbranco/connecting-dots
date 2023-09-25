@@ -17,6 +17,11 @@ const router = useRouter();
 
 const pageRoute = ref("/ShapeGameOptions");
 
+// Variáveis para as partículas
+let particles = [];
+const particleCount = 30; // Número de partículas a serem geradas//aqui
+const particleColor = "#FFFFFF"; // Cor das partículas
+
 const nextShape = (next) => router.push(`${next}`);
 
 let dots = [];
@@ -27,33 +32,74 @@ let drawingCompleted = false;
 let lastPos = { x: 100, y: 160 };
 let currentPos = { x: 100, y: 160 };
 let dotSize = 12;
+let currentPulsatingIndex = 0;
 
 class Dot {
   constructor(x, y, strokeColor) {
     this.x = x;
     this.y = y;
     this.strokeColor = strokeColor;
+    this.isPulsating = false; // Flag para indicar se o ponto deve pulsar
+    this.scale = 1; // Escala inicial
+    this.scaleDirection = 1; // Direção da escala (1 para aumentar, -1 para diminuir)
+    this.pulseSpeed = 0.004 // Velocidade da pulsação
   }
   connect(px, py, ctx) {
     ctx.strokeStyle = this.strokeColor;
-    ctx.lineWidth = 10;
+    ctx.lineWidth = 15;
     ctx.beginPath();
     ctx.moveTo(this.x, this.y);
     ctx.lineTo(px, py);
     ctx.stroke();
   }
   plot(ctx) {
-    ctx.fillStyle = "rgb(226, 126, 110)";
-    ctx.strokeStyle = this.strokeColor;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, dotSize, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-  }
+  ctx.save(); // Salva o estado do contexto
+  ctx.translate(this.x, this.y); // Define a posição do ponto
+
+  // Calcula as coordenadas de desenho sem a escala
+  const drawX = 0; // Use 0 para X
+  const drawY = 0; // Use 0 para Y
+
+  ctx.scale(this.scale, this.scale); // Aplica a escala
+
+  ctx.fillStyle = "rgb(226, 126, 110)";
+  ctx.strokeStyle = this.strokeColor;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.arc(drawX, drawY, dotSize, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.restore(); // Restaura o estado do contexto
+}
+
   within(px, py) {
     let d = Math.sqrt(Math.pow(px - this.x, 2) + Math.pow(py - this.y, 2));
     return d < dotSize;
+  }
+
+  pulse() {
+    // Atualiza a escala
+    this.scale += this.scaleDirection * this.pulseSpeed;
+
+    // Inverte a direção da escala quando atingir os limites
+    if (this.scale <= 1 || this.scale >= 1.2) {
+      this.scaleDirection *= -1;
+    }
+  }
+  startPulsating() {
+    this.isPulsating = true;
+    this.animatePulse();
+  }
+  stopPulsating() {
+    this.isPulsating = false;
+    this.scale = 1;
+  }
+  animatePulse() {
+    if (this.isPulsating) {
+      this.pulse(); // Aplica o efeito de pulsar
+      requestAnimationFrame(this.animatePulse.bind(this)); // Próximo quadro de animação
+    }
   }
 }
 
@@ -115,10 +161,12 @@ onMounted(() => {
     redrawCanvas();
     draw();
 
-    for (let i = 0; i < guidePoints.length; i++) {
-      guideDots.push(
-        new Dot(guidePoints[i].x, guidePoints[i].y, "rgba(26,27,28,.7)")
-      );
+   for (let i = 0; i < guidePoints.length; i++) {
+      const dot = new Dot(guidePoints[i].x, guidePoints[i].y, "#5386E4");
+      if (i === 0) {
+        dot.startPulsating(); // Inicia a pulsação do primeiro ponto
+      }
+      guideDots.push(dot);
     }
   }
 
@@ -159,6 +207,7 @@ onMounted(() => {
     const touch = event.touches[0];
     currentPos.x = touch.clientX - canvas.getBoundingClientRect().left;
     currentPos.y = touch.clientY - canvas.getBoundingClientRect().top;
+    console.log('puxa')
     mousePressed();
   });
 
@@ -168,6 +217,8 @@ onMounted(() => {
       currentPos.x = touch.clientX - canvas.getBoundingClientRect().left
       currentPos.y = touch.clientY - canvas.getBoundingClientRect().top
 
+      console.log('puxando')
+
       mousePressed()
     }
   });
@@ -175,6 +226,7 @@ onMounted(() => {
   canvas.addEventListener('touchend', () => {
     if (isDrawing) {
       isDrawing = false;
+      console.log("soltou")
     }
   });
 
@@ -199,7 +251,7 @@ onMounted(() => {
       context.font = "24px Arial";
     } else if (!drawingCompleted) {
       context.strokeStyle = "rgb(226, 126, 110)";
-      context.lineWidth = 5;
+      context.lineWidth = 11;
       context.beginPath();
       context.moveTo(lastPos.x, lastPos.y);
       context.lineTo(currentPos.x, currentPos.y);
@@ -228,26 +280,34 @@ onMounted(() => {
   }
 
   function mousePressed() {
-    if (
-      !drawingCompleted &&
-      guideDots[currentIndex].within(currentPos.x, currentPos.y)
-    ) {
-      dots.push(new Dot(currentPos.x, currentPos.y, "#E27E6E"));
-      currentIndex++;
-      lastPos.x = currentPos.x;
-      lastPos.y = currentPos.y;
+  if (!drawingCompleted && guideDots[currentIndex].within(currentPos.x, currentPos.y)) {
+    dots.push(new Dot(currentPos.x, currentPos.y, "#E27E6E", true));
+    currentIndex++;
+    lastPos.x = currentPos.x;
+    lastPos.y = currentPos.y;
 
-      if (currentIndex === guideDots.length) {
-        dots.push(new Dot(guideDots[0].x, guideDots[0].y, "#E27E6E"));
-        document.querySelector(".veryGood").classList.add("active");
-        document.querySelector(".canvasShow").style.display = "none";
-        document.querySelector("#dots").style.display = "none";
-        document.querySelector(".numbers").style.display = "none";
-        document.querySelector(".arrow").style.display = "none";
-        drawingCompleted = true;
-      }
+    // Verifica se há um próximo ponto
+    if (currentPulsatingIndex < guideDots.length - 1) {
+      // Para a pulsação do ponto anterior
+      guideDots[currentPulsatingIndex].stopPulsating();
+
+      currentPulsatingIndex++;
+      guideDots[currentPulsatingIndex].startPulsating(); // Inicia a pulsação do próximo ponto
+    }
+
+    if (currentIndex === guideDots.length) {
+      dots.push(new Dot(guideDots[0].x, guideDots[0].y, "#E27E6E"));
+      document.querySelector(".veryGood").classList.add("active");
+      document.querySelector(".canvasShow").style.display = "none";
+      document.querySelector("#dots").style.display = "none";
+      document.querySelector(".numbers").style.display = "none";
+      document.querySelector(".arrow").style.display = "none";
+      drawingCompleted = true;
     }
   }
+}
+
+
 
   draw();
 });
@@ -354,7 +414,7 @@ onMounted(() => {
   margin-top:-31rem;
   width:8rem;
   margin-left:-38rem;
-  animation:code 3s linear infinite;
+  animation:code 4s linear infinite;
 }
 
 @keyframes code {

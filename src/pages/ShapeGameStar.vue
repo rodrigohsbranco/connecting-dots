@@ -342,7 +342,7 @@ onMounted(() => {
 .numbers {
   position:absolute;
   width:33rem;
-  top:2.6rem;
+  margin:-2rem 0 0 .5rem;
 }
 
 #dots {
@@ -477,30 +477,30 @@ onMounted(() => {
 
 @media (max-width:640px) {
   .numbers {
-    width:17rem;
-    margin-left:0rem;
-    margin-top:8rem;
+    width:16rem !important; 
+    margin-left:0rem !important;
+    margin-top:-.5rem !important;
   }
 }
 
 @media (max-width:414px) {
 .numbers {
-  width:11rem;
+  width:11rem !important;
 }
 }
 
 @media (max-width:362px) {
 .numbers {
-  margin-top:12rem;
-  width:9rem;
+  margin-top:0rem !important;
+  width:9rem !important;
 }
 }
 
 @media (max-height:552px) {
 .numbers {
-  width:19rem;
-  margin-left:.25rem;
-  margin-top:6rem;
+  width:22rem;
+  margin-left:0rem;
+    margin-top:0rem;
 }
 }
 
@@ -512,11 +512,11 @@ onMounted(() => {
 }
 }
 
-@media (max-height:367px) {
+@media (max-height:387px) {
 .numbers {
-  width:15rem;
-  margin-top:-1rem;
-  margin-left:.25rem;
+  width:15rem !important;
+  margin-top:-3.5rem !important;
+  margin-left:.25rem !important;
 }
 }
 
