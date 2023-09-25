@@ -1,21 +1,24 @@
 <script setup>
-import fullSquare from "../assets/images/squarePicture.png";
-import veryGoodImg from "../assets/images/veryGoodImg.png";
+  import fullSquare from "../assets/images/squarePicture.png";
+  import veryGoodImg from "../assets/images/veryGoodImg.png";
 
-import arrow from "../assets/images/0-arrow.png";
-import nextButton from "../assets/images/nextButton.png";
+  import arrow from "../assets/images/0-arrow.png";
+  import nextButton from "../assets/images/nextButton.png";
 
-import { onMounted, ref } from "vue";
-import shapeGameBg from "../assets/images/shapeGameBg.png";
-import numberSquare from "../assets/images/numbers/square.png";
+  import { onMounted, ref } from "vue";
+  import shapeGameBg from "../assets/images/shapeGameBg.png";
+  import numberSquare from "../assets/images/numbers/square.png";
 
-import BackButton from "../components/BackButton.vue";
-import HomeButton from "../components/HomeButton.vue";
-import { useRouter } from "vue-router";
+  import BackButton from "../components/BackButton.vue";
+  import HomeButton from "../components/HomeButton.vue";
+  import { useRouter } from "vue-router";
+  import ConfettiExplosion from 'vue-confetti-explosion';
 
 const router = useRouter();
 
 const pageRoute = ref("/ShapeGameOptions");
+
+let explosion = ref(false);
 
 // Variáveis para as partículas
 let particles = [];
@@ -42,7 +45,7 @@ class Dot {
     this.isPulsating = false; // Flag para indicar se o ponto deve pulsar
     this.scale = 1; // Escala inicial
     this.scaleDirection = 1; 
-    this.pulseSpeed = 0.01
+    this.pulseSpeed = 0.005
   }
   connect(px, py, ctx) {
     ctx.strokeStyle = this.strokeColor;
@@ -267,7 +270,7 @@ onMounted(() => {
   }
 
   function fillVertex(ctx) {
-    ctx.strokeStyle = "rgb(90, 90, 90)";
+    ctx.strokeStyle = "pink";
     ctx.fillStyle = "rgb(226, 126, 110)";
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -299,16 +302,16 @@ onMounted(() => {
       dots.push(new Dot(guideDots[0].x, guideDots[0].y, "#E27E6E"));
       document.querySelector(".veryGood").classList.add("active");
       document.querySelector(".canvasShow").style.display = "none";
+
       document.querySelector("#dots").style.display = "none";
       document.querySelector(".numbers").style.display = "none";
       document.querySelector(".arrow").style.display = "none";
-      drawingCompleted = true;
+
+      explosion.value = true
+      drawingCompleted = true
     }
   }
 }
-
-
-
   draw();
 });
 </script>
@@ -317,6 +320,7 @@ onMounted(() => {
   <div class="square">
     <img :src="shapeGameBg" class='img-background' alt="Descrição da imagem">
     <img :src="numberSquare" class='numbers' alt="numbers">
+
     <img :src='arrow' class="arrow">
 
     <BackButton :name="pageRoute" />
@@ -337,6 +341,11 @@ onMounted(() => {
         />
       </div>
     </section>
+
+    <div v-if="explosion" class='confetti'>
+      <ConfettiExplosion :numberOfPieces="900" />
+    </div>
+    
   </div>
 </template>
 
@@ -347,6 +356,19 @@ onMounted(() => {
   overflow: hidden;
   display: grid;
   place-items: center;
+}
+
+.confetti {
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  display:grid;
+  place-items:center;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2000;
+  pointer-events: none;
 }
 
 .img-background {
@@ -414,7 +436,7 @@ onMounted(() => {
   margin-top:-31rem;
   width:8rem;
   margin-left:-38rem;
-  animation:code 4s linear infinite;
+  animation:code 6s linear infinite;
 }
 
 @keyframes code {

@@ -10,9 +10,12 @@
   },
   "main": "index.js",
   "dependencies": {
+    "canvas-confetti": "^1.6.0",
+    "confetti-js": "^0.0.18",
+    "gsap": "^3.12.2",
     "vue": "^3.2.47",
-    "vue-router": "^4.2.4",
-    "gsap": "^3.12.2"
+    "vue-confetti-explosion": "^1.0.2",
+    "vue-router": "^4.2.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.1.0",
