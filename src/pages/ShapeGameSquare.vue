@@ -324,21 +324,35 @@ function updateParticles() {
 
 updateParticles()
 
+//estrelas brancas
+// function getRandomColor() {
+//   const alpha = 0.6 + Math.random() * 0.4
+//   const color = `rgba(255, 255, 255, ${alpha})`
+
+//   return color
+// }
+
+//estrelas coloridas
 function getRandomColor() {
-  const alpha = 0.6 + Math.random() * 0.4
-  const color = `rgba(255, 255, 255, ${alpha})`
+  const colors = [
+    "rgba(255, 255, 255, 1)",
+    "rgba(148,28,47,1)",
+    "rgba(243, 202, 64, 1)",
+  ];
+
+  const color = colors[Math.floor(Math.random() * colors.length)]
+
+  const randomOpacity = 0.6 + Math.random() * 0.4
+
+  const rgbaMatch = color.match(/rgba\((\d+), (\d+), (\d+), (\d+(\.\d+)?)\)/)
+  if (rgbaMatch) {
+    const [, r, g, b, a] = rgbaMatch.map(parseFloat)
+    return `rgba(${r}, ${g}, ${b}, ${randomOpacity})`
+  }
 
   return color
 }
-
-// canvasParticles.addEventListener("mousemove", (event) => {
-//   createParticle(event.clientX, event.clientY)
-// })
-
-// canvasParticles.addEventListener("touchmove", (event) => {
-//   const touch = event.touches[0]
-//   createParticle(touch.clientX, touch.clientY)
-// })
+getRandomColor()
 
 function createPolygonClip(ctx, x, y, size) {
   ctx.beginPath()
