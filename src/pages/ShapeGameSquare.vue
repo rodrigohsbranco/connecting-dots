@@ -23,7 +23,7 @@ let explosion = ref(false);
 const nextShape = (next) => router.push(`${next}`);
 
 const minParticleSize = 8
-const maxParticleSize = 27
+const maxParticleSize = 15
 
 const minOpacity = 0.7
 const maxOpacity = 1
@@ -114,11 +114,14 @@ class Dot {
 }
 
 onMounted(() => {
-  const canvas = document.getElementById("dots");
-  const context = canvas.getContext("2d");
+  const canvas = document.getElementById("dots")
+  const context = canvas.getContext("2d")
 
   const canvasParticles = document.getElementById("particles")
   const contextParticles = canvasParticles.getContext("2d")//aqui
+
+  const canvasStars = document.getElementById("starsCanvas")
+  const contextStars = canvasStars.getContext("2d")
 
   resizeCanvas();
   function resizeCanvas() {
@@ -145,6 +148,9 @@ onMounted(() => {
       
       canvasParticles.width = 350;
       canvasParticles.height = 350;
+      
+      canvasStars.width = 380;
+      canvasStars.height = 350;
     } 
     else if (window.innerWidth <= widthMin) {
       canvas.width = 290;
@@ -152,6 +158,9 @@ onMounted(() => {
 
       canvasParticles.width = 290;
       canvasParticles.height = 290;
+
+      canvasStars.width = 320;
+      canvasStars.height = 290;
     }
     else if (window.innerHeight <= maxHeight && window.innerHeight > heightMin) {
       canvas.width = 300;
@@ -159,6 +168,9 @@ onMounted(() => {
 
       canvasParticles.width = 300;
       canvasParticles.height = 300;
+
+      canvasStars.width = 330;
+      canvasStars.height = 300;
       
       document.querySelector('#dots').style.top = '0rem';
     }
@@ -168,6 +180,9 @@ onMounted(() => {
 
       canvasParticles.width = 250;
       canvasParticles.height = 250;
+
+      canvasStars.width = 280;
+      canvasStars.height = 250;
     }
     else {
       canvas.width = 420;
@@ -175,6 +190,9 @@ onMounted(() => {
 
       canvasParticles.width = 420;
       canvasParticles.height = 420;
+
+      canvasStars.width = 450
+      canvasStars.height = 420
     }
 
     scaleFactorX = canvas.width / 420;
@@ -273,7 +291,6 @@ onMounted(() => {
     }
   });
 
-
   canvas.addEventListener('touchend', () => {
     if (isDrawing) {
       isDrawing = false;
@@ -281,6 +298,118 @@ onMounted(() => {
     }
   });
 
+  canvasStars.addEventListener("click", (event) => {
+    const rect = canvasStars.getBoundingClientRect(); // Obtém as informações do retângulo do canvas
+    const x = event.clientX - rect.left; // Coordenada x relativa ao canvas
+    const y = event.clientY - rect.top; // Coordenada y relativa ao canvas
+    createExplosion(x, y);
+  });
+
+  canvasStars.addEventListener("touchstart", (event) => {
+    const rect = canvasStars.getBoundingClientRect();
+    const x = event.touches[0].clientX - rect.left;
+    const y = event.touches[0].clientY - rect.top;
+    createExplosion(x, y);
+  });
+
+  const starColors = ["#5386E4"];
+  const explosionDuration = 500;
+  const stars = [];
+
+  //stars
+  function createStar(x, y, size, color, opacity, rotation) {
+  contextStars.save(); // Salva o estado atual do contexto
+  contextStars.translate(x, y); // Define o ponto de rotação no centro da estrela
+  contextStars.rotate(rotation); // Aplica a rotação
+  contextStars.beginPath();
+  contextStars.moveTo(0, -size * 2);
+
+  const angles = [0, 72, 144, 216, 288];
+
+  for (let i = 0; i < angles.length; i++) {
+    const angle = angles[i] * (Math.PI / 180);
+    const x2 = size * Math.cos(angle);
+    const y2 = size * Math.sin(angle);
+    contextStars.lineTo(x2, y2);
+
+    const angle2 = (angles[i] + 36) * (Math.PI / 180);
+    const x3 = (size / 2) * Math.cos(angle2);
+    const y3 = (size / 2) * Math.sin(angle2);
+    contextStars.lineTo(x3, y3);
+  }
+
+  contextStars.closePath();
+  contextStars.fillStyle = color;
+  contextStars.globalAlpha = opacity;
+  contextStars.fill();
+  contextStars.globalAlpha = 1;
+  contextStars.restore(); // Restaura o estado do contexto para evitar rotações subsequentes
+  }
+
+  function createExplosion(x, y) {
+  const explosionDistance = 800;
+
+  for (let i = 0; i < 2; i++) {
+    const size = 16;
+    const color = starColors[Math.floor(Math.random() * starColors.length)];
+    const angle = (i === 0 ? 30 : 150) * (Math.PI / 180);
+    const x2 = x + explosionDistance * Math.cos(angle);
+    const y2 = y + explosionDistance * Math.sin(angle);
+
+    // Calcula dx e dy com base na diferença entre x2 e x e entre y2 e y,
+    // dividido pela duração da explosão
+    const dx = (x2 - x) / explosionDuration;
+    const dy = (y2 - y) / explosionDuration;
+
+    stars.push({
+      x: x,
+      y: y,
+      size: size,
+      color: color,
+      opacity: 1.0,
+      dx: dx,
+      dy: dy,
+      startTime: Date.now(),
+      rotation: Math.random() * (Math.PI * 2),
+    });
+  }
+}
+
+
+  function drawStars() {
+  contextStars.clearRect(0, 0, canvasStars.width, canvasStars.height);//aqui
+
+  for (let i = 0; i < stars.length; i++) {
+    const star = stars[i];
+    const elapsed = Date.now() - star.startTime;
+    
+    if (elapsed < explosionDuration) {
+      star.x += star.dx;
+      star.y += star.dy;
+      star.rotation += 0.1; // Incrementa o ângulo de rotação
+      if (star.rotation >= Math.PI * 2) {
+        star.rotation -= Math.PI * 2;
+      }
+
+      if (elapsed >= explosionDuration - 100) {
+        star.opacity = 1 - ((elapsed - (explosionDuration - 100)) / 100);
+      } else {
+        star.opacity = 1.0;
+      }
+
+      createStar(star.x, star.y, star.size, star.color, star.opacity, star.rotation);
+    } else {
+      stars.splice(i, 1);
+      i--;
+    }
+  }
+
+  requestAnimationFrame(drawStars);
+  }
+
+  drawStars()
+
+  //particles
   function createParticle(x, y) {
   for (let i = 0; i < 1; i++) { 
     const randomX = x + (Math.random() * 80 - 20)
@@ -433,6 +562,9 @@ function createPolygonClip(ctx, x, y, size) {
   function mousePressed() {
   if (!drawingCompleted && guideDots[currentIndex].within(currentPos.x, currentPos.y)) {
     dots.push(new Dot(currentPos.x, currentPos.y, "#E27E6E", true));
+    const rect = canvasStars.getBoundingClientRect()
+
+    createExplosion(currentPos.x, currentPos.y);
     currentIndex++;
     lastPos.x = currentPos.x;
     lastPos.y = currentPos.y;
@@ -455,6 +587,9 @@ function createPolygonClip(ctx, x, y, size) {
       document.querySelector(".numbers").style.display = "none";
       document.querySelector(".arrow").style.display = "none";
 
+      document.querySelector("#particles").style.display = "none";
+      document.querySelector("#starsCanvas").style.display = "none";
+
       explosion.value = true
       drawingCompleted = true
     }
@@ -474,8 +609,8 @@ function createPolygonClip(ctx, x, y, size) {
     <BackButton :name="pageRoute" />
     <!-- <HomeButton /> -->
     <canvas class="canvasShow" id="dots"></canvas>
-
     <canvas id="particles"></canvas>
+    <canvas id="starsCanvas"></canvas>
 
     <section class="veryGood">
       <article>
@@ -491,11 +626,10 @@ function createPolygonClip(ctx, x, y, size) {
         />
       </div>
     </section>
-
-    <div v-if="explosion" class='confetti'>
-      <ConfettiExplosion :numberOfPieces="900" />
-    </div>
     
+    <div v-if="explosion" class='confetti'>
+      <ConfettiExplosion :numberOfPieces="900"/>
+    </div>
   </div>
 </template>
 
@@ -517,11 +651,11 @@ function createPolygonClip(ctx, x, y, size) {
   place-items:center;
   width: 100vw;
   height: 100vh;
-  z-index: 2000;
+  z-index: 3000;
   pointer-events: none;
 }
 
-#particles {
+#particles, #starsCanvas {
   position: absolute;
   top: 50%;
   left: 50%;
