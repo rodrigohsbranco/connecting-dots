@@ -20,12 +20,19 @@ const pageRoute = ref("/ShapeGameOptions");
 
 let explosion = ref(false);
 
-// Variáveis para as partículas
-let particles = [];
-const particleCount = 30; // Número de partículas a serem geradas//aqui
-const particleColor = "#FFFFFF"; // Cor das partículas
-
 const nextShape = (next) => router.push(`${next}`);
+
+const minParticleSize = 8
+const maxParticleSize = 17
+
+const minOpacity = 0.1
+const maxOpacity = 1
+const opacityChangeSpeed = .009
+
+const minSpeed = -1
+const maxSpeed = 2
+
+const particles = []//aqui
 
 let dots = [];
 let guideDots = [];
@@ -110,6 +117,9 @@ onMounted(() => {
   const canvas = document.getElementById("dots");
   const context = canvas.getContext("2d");
 
+  const canvasParticles = document.getElementById("particles")
+  const contextParticles = canvasParticles.getContext("2d")//aqui
+
   resizeCanvas();
   function resizeCanvas() {
 
@@ -132,24 +142,39 @@ onMounted(() => {
     if (window.innerWidth <= maxWidth && window.innerWidth > widthMin) {
       canvas.width = 350;
       canvas.height = 350;
+      
+      canvasParticles.width = 350;
+      canvasParticles.height = 350;
     } 
     else if (window.innerWidth <= widthMin) {
       canvas.width = 290;
       canvas.height = 290;
+
+      canvasParticles.width = 290;
+      canvasParticles.height = 290;
     }
     else if (window.innerHeight <= maxHeight && window.innerHeight > heightMin) {
       canvas.width = 300;
       canvas.height = 300;
+
+      canvasParticles.width = 300;
+      canvasParticles.height = 300;
       
       document.querySelector('#dots').style.top = '0rem';
     }
     else if (window.innerHeight <= heightMin) {
       canvas.width = 250;
       canvas.height = 250;
+
+      canvasParticles.width = 250;
+      canvasParticles.height = 250;
     }
     else {
       canvas.width = 420;
       canvas.height = 420;
+
+      canvasParticles.width = 420;
+      canvasParticles.height = 420;
     }
 
     scaleFactorX = canvas.width / 420;
@@ -191,6 +216,16 @@ onMounted(() => {
   canvas.addEventListener("mousemove", (event) => {
     currentPos.x = event.clientX - canvas.getBoundingClientRect().left;
     currentPos.y = event.clientY - canvas.getBoundingClientRect().top;
+
+    // Ajustar as coordenadas do evento para o canvasParticles
+    const particlesCanvas = document.getElementById("particles");
+    const particlesCtx = particlesCanvas.getContext("2d");
+    const particlesCanvasRect = particlesCanvas.getBoundingClientRect();
+    const adjustedX = (event.clientX - particlesCanvasRect.left) * (particlesCanvas.width / particlesCanvasRect.width);
+    const adjustedY = (event.clientY - particlesCanvasRect.top) * (particlesCanvas.height / particlesCanvasRect.height);
+
+    // Criar partículas no canvasParticles com as coordenadas ajustadas
+    createParticle(adjustedX, adjustedY);
   });
 
   canvas.addEventListener("pointermove", (event) => {
@@ -232,6 +267,92 @@ onMounted(() => {
       console.log("soltou")
     }
   });
+
+  function createParticle(x, y) {
+  for (let i = 0; i < 1; i++) { 
+    const randomX = x + (Math.random() * 80 - 20)
+    const randomY = y + (Math.random() * 80 - 20)
+    const randomSize = minParticleSize + Math.random() * (maxParticleSize - minParticleSize)
+    const randomColor = getRandomColor()
+    const randomOpacity = minOpacity + Math.random() * (maxOpacity - minOpacity)
+    const randomSpeedX = minSpeed + Math.random() * (maxSpeed - minSpeed)
+    const randomSpeedY = minSpeed + Math.random() * (maxSpeed - minSpeed)
+
+    particles.push({
+      x: randomX,
+      y: randomY,
+      size: randomSize,
+      color: randomColor,
+      opacity: randomOpacity,
+      speedX: randomSpeedX,
+      speedY: randomSpeedY,
+    })
+  }
+}
+
+function updateParticles() {
+  contextParticles.clearRect(0, 0, canvas.width, canvas.height)
+
+  for (let i = 0; i < particles.length; i++) {
+    const particle = particles[i]
+
+    contextParticles.save()
+
+    createPolygonClip(contextParticles, particle.x, particle.y, particle.size)
+
+    contextParticles.globalAlpha = particle.opacity
+    contextParticles.filter = 'blur(1px)'
+    contextParticles.fillStyle = particle.color
+    contextParticles.beginPath()
+    contextParticles.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
+    contextParticles.fill()
+    contextParticles.restore()
+
+    particle.x += particle.speedX
+    particle.y += particle.speedY
+
+    particle.opacity -= opacityChangeSpeed
+
+    if (particle.opacity <= 0) {
+      particles.splice(i, 1)
+      i--
+    }
+  }
+
+  requestAnimationFrame(updateParticles)
+}
+
+updateParticles()
+
+function getRandomColor() {
+  const alpha = 0.6 + Math.random() * 0.4
+  const color = `rgba(255, 255, 255, ${alpha})`
+
+  return color
+}
+
+// canvasParticles.addEventListener("mousemove", (event) => {
+//   createParticle(event.clientX, event.clientY)
+// })
+
+// canvasParticles.addEventListener("touchmove", (event) => {
+//   const touch = event.touches[0]
+//   createParticle(touch.clientX, touch.clientY)
+// })
+
+function createPolygonClip(ctx, x, y, size) {
+  ctx.beginPath()
+  ctx.moveTo(x + size * 0.38, y + size * 0.35)
+  ctx.lineTo(x + size * 0.51, y + size * 0)
+  ctx.lineTo(x + size * 0.62, y + size * 0.36)
+  ctx.lineTo(x + size * 1, y + size * 0.48)
+  ctx.lineTo(x + size * 0.61, y + size * 0.60)
+  ctx.lineTo(x + size * 0.48, y + size * 1)
+  ctx.lineTo(x + size * 0.37, y + size * 0.59)
+  ctx.lineTo(x + size * 0, y + size * 0.47)
+  ctx.closePath()
+  ctx.clip()
+}
 
   function draw() {
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -327,6 +448,8 @@ onMounted(() => {
     <!-- <HomeButton /> -->
     <canvas class="canvasShow" id="dots"></canvas>
 
+    <canvas id="particles"></canvas>
+
     <section class="veryGood">
       <article>
         <img :src="fullSquare" alt="Forma de Quadrado completa" />
@@ -369,6 +492,13 @@ onMounted(() => {
   height: 100vh;
   z-index: 2000;
   pointer-events: none;
+}
+
+#particles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .img-background {
