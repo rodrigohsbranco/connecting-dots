@@ -63,7 +63,7 @@ class Dot {
     ctx.stroke();
   }
   plot(ctx) {
-  ctx.save(); // Salva o estado do contexto
+  ctx.save()
   ctx.translate(this.x, this.y); // Define a posição do ponto
 
   // Calcula as coordenadas de desenho sem a escala
@@ -192,7 +192,7 @@ onMounted(() => {
    for (let i = 0; i < guidePoints.length; i++) {
       const dot = new Dot(guidePoints[i].x, guidePoints[i].y, "#5386E4");
       if (i === 0) {
-        dot.startPulsating(); // Inicia a pulsação do primeiro ponto
+        dot.startPulsating()
       }
       guideDots.push(dot);
     }
@@ -211,21 +211,24 @@ onMounted(() => {
     currentPos.x = event.clientX - canvas.getBoundingClientRect().left;
     currentPos.y = event.clientY - canvas.getBoundingClientRect().top;
     mousePressed();
+
+    canvasParticles.classList.add('drawing')
   });
 
   canvas.addEventListener("mousemove", (event) => {
-    currentPos.x = event.clientX - canvas.getBoundingClientRect().left;
-    currentPos.y = event.clientY - canvas.getBoundingClientRect().top;
+    currentPos.x = event.clientX - canvas.getBoundingClientRect().left
+    currentPos.y = event.clientY - canvas.getBoundingClientRect().top
 
-    // Ajustar as coordenadas do evento para o canvasParticles
-    const particlesCanvas = document.getElementById("particles");
-    const particlesCtx = particlesCanvas.getContext("2d");
-    const particlesCanvasRect = particlesCanvas.getBoundingClientRect();
-    const adjustedX = (event.clientX - particlesCanvasRect.left) * (particlesCanvas.width / particlesCanvasRect.width);
-    const adjustedY = (event.clientY - particlesCanvasRect.top) * (particlesCanvas.height / particlesCanvasRect.height);
+    if (canvasParticles.classList.contains('drawing')) {
+      const particlesCanvas = document.getElementById("particles")
+      const particlesCtx = particlesCanvas.getContext("2d")
+      const particlesCanvasRect = particlesCanvas.getBoundingClientRect()
 
-    // Criar partículas no canvasParticles com as coordenadas ajustadas
-    createParticle(adjustedX, adjustedY);
+      const adjustedX = (event.clientX - particlesCanvasRect.left) * (particlesCanvas.width / particlesCanvasRect.width)
+      const adjustedY = (event.clientY - particlesCanvasRect.top) * (particlesCanvas.height / particlesCanvasRect.height)
+
+      createParticle(adjustedX, adjustedY)
+    }
   });
 
   canvas.addEventListener("pointermove", (event) => {
@@ -252,14 +255,24 @@ onMounted(() => {
   canvas.addEventListener('touchmove', (event) => {
     if (isDrawing) {
       const touch = event.touches[0];
-      currentPos.x = touch.clientX - canvas.getBoundingClientRect().left
-      currentPos.y = touch.clientY - canvas.getBoundingClientRect().top
+      currentPos.x = touch.clientX - canvas.getBoundingClientRect().left;
+      currentPos.y = touch.clientY - canvas.getBoundingClientRect().top;
 
-      console.log('puxando')
+      console.log('puxando');
 
-      mousePressed()
+      const particlesCanvas = document.getElementById("particles");
+      const particlesCtx = particlesCanvas.getContext("2d");
+      const particlesCanvasRect = particlesCanvas.getBoundingClientRect();
+
+      const adjustedX = (touch.clientX - particlesCanvasRect.left) * (particlesCanvas.width / particlesCanvasRect.width);
+      const adjustedY = (touch.clientY - particlesCanvasRect.top) * (particlesCanvas.height / particlesCanvasRect.height);
+
+      createParticle(adjustedX, adjustedY);
+
+      mousePressed();
     }
   });
+
 
   canvas.addEventListener('touchend', () => {
     if (isDrawing) {
@@ -335,9 +348,9 @@ updateParticles()
 //estrelas coloridas
 function getRandomColor() {
   const colors = [
-    "rgba(255, 255, 255, 1)",
-    "rgba(148,28,47,1)",
-    "rgba(243, 202, 64, 1)",
+    "rgba(255,255,255,1)",
+    "rgba(35,181,211,1)",
+    "rgba(243,202,64,1)",
   ];
 
   const color = colors[Math.floor(Math.random() * colors.length)]
