@@ -23,11 +23,11 @@ let explosion = ref(false);
 const nextShape = (next) => router.push(`${next}`);
 
 const minParticleSize = 8
-const maxParticleSize = 17
+const maxParticleSize = 27
 
-const minOpacity = 0.1
+const minOpacity = 0.7
 const maxOpacity = 1
-const opacityChangeSpeed = .009
+const opacityChangeSpeed = .01
 
 const minSpeed = -1
 const maxSpeed = 2
