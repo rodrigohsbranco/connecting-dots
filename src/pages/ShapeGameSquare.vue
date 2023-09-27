@@ -33,6 +33,7 @@ const minSpeed = -1
 const maxSpeed = 2
 
 const particles = []//aqui
+let clearLine = false
 
 let dots = [];
 let guideDots = [];
@@ -64,23 +65,22 @@ class Dot {
   }
   plot(ctx) {
   ctx.save()
-  ctx.translate(this.x, this.y); // Define a posição do ponto
+  ctx.translate(this.x, this.y)
 
-  // Calcula as coordenadas de desenho sem a escala
-  const drawX = 0; // Use 0 para X
-  const drawY = 0; // Use 0 para Y
+  const drawX = 0
+  const drawY = 0
 
-  ctx.scale(this.scale, this.scale); // Aplica a escala
+  ctx.scale(this.scale, this.scale)
 
-  ctx.fillStyle = "rgb(226, 126, 110)";
-  ctx.strokeStyle = this.strokeColor;
-  ctx.lineWidth = 4;
-  ctx.beginPath();
-  ctx.arc(drawX, drawY, dotSize, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.stroke();
+  ctx.fillStyle = "rgb(226, 126, 110)"
+  ctx.strokeStyle = this.strokeColor
+  ctx.lineWidth = 4
+  ctx.beginPath()
+  ctx.arc(drawX, drawY, dotSize, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.stroke()
 
-  ctx.restore(); // Restaura o estado do contexto
+  ctx.restore()
 }
 
   within(px, py) {
@@ -222,10 +222,12 @@ onMounted(() => {
 
   window.addEventListener("resize", resizeCanvas);
 
-  let isDrawing = false;
+  let isDrawing = false
 
   canvas.addEventListener("pointerdown", (event) => {
     isDrawing = true;
+    clearLine = false
+
     currentPos.x = event.clientX - canvas.getBoundingClientRect().left;
     currentPos.y = event.clientY - canvas.getBoundingClientRect().top;
     mousePressed();
@@ -236,6 +238,7 @@ onMounted(() => {
   canvas.addEventListener("mousemove", (event) => {
     currentPos.x = event.clientX - canvas.getBoundingClientRect().left
     currentPos.y = event.clientY - canvas.getBoundingClientRect().top
+    clearLine = false
 
     if (canvasParticles.classList.contains('drawing')) {
       const particlesCanvas = document.getElementById("particles")
@@ -251,6 +254,7 @@ onMounted(() => {
 
   canvas.addEventListener("pointermove", (event) => {
     if (isDrawing) {
+      clearLine = false
       currentPos.x = event.clientX - canvas.getBoundingClientRect().left;
       currentPos.y = event.clientY - canvas.getBoundingClientRect().top;
       mousePressed()
@@ -259,10 +263,12 @@ onMounted(() => {
 
   canvas.addEventListener("pointerup", () => {
     isDrawing = false;
+    clearLine = false
   });
 
   canvas.addEventListener('touchstart', (event) => {
     isDrawing = true;
+    clearLine = false
     const touch = event.touches[0];
     currentPos.x = touch.clientX - canvas.getBoundingClientRect().left;
     currentPos.y = touch.clientY - canvas.getBoundingClientRect().top;
@@ -272,6 +278,8 @@ onMounted(() => {
 
   canvas.addEventListener('touchmove', (event) => {
     if (isDrawing) {
+      clearLine = false
+
       const touch = event.touches[0];
       currentPos.x = touch.clientX - canvas.getBoundingClientRect().left;
       currentPos.y = touch.clientY - canvas.getBoundingClientRect().top;
@@ -294,120 +302,119 @@ onMounted(() => {
   canvas.addEventListener('touchend', () => {
     if (isDrawing) {
       isDrawing = false;
+      clearLine = true
       console.log("soltou")
     }
-  });
+  })
 
   canvasStars.addEventListener("click", (event) => {
-    const rect = canvasStars.getBoundingClientRect(); // Obtém as informações do retângulo do canvas
-    const x = event.clientX - rect.left; // Coordenada x relativa ao canvas
-    const y = event.clientY - rect.top; // Coordenada y relativa ao canvas
-    createExplosion(x, y);
-  });
+    const rect = canvasStars.getBoundingClientRect() 
+    const x = event.clientX - rect.left 
+    const y = event.clientY - rect.top 
+    createExplosion(x, y)
+  })
 
   canvasStars.addEventListener("touchstart", (event) => {
-    const rect = canvasStars.getBoundingClientRect();
-    const x = event.touches[0].clientX - rect.left;
-    const y = event.touches[0].clientY - rect.top;
-    createExplosion(x, y);
-  });
+    const rect = canvasStars.getBoundingClientRect()
+    const x = event.touches[0].clientX - rect.left
+    const y = event.touches[0].clientY - rect.top
+    createExplosion(x, y)
+  })
 
-  const starColors = ["#5386E4"];
   const explosionDuration = 500;
   const stars = [];
 
-  //stars
-  function createStar(x, y, size, color, opacity, rotation) {
-  contextStars.save(); // Salva o estado atual do contexto
-  contextStars.translate(x, y); // Define o ponto de rotação no centro da estrela
-  contextStars.rotate(rotation); // Aplica a rotação
-  contextStars.beginPath();
-  contextStars.moveTo(0, -size * 2);
+  function createStar(x, y, size, opacity, rotation) {
+    contextStars.save();
+    contextStars.translate(x, y);
+    contextStars.rotate(rotation);
+    contextStars.beginPath();
+    contextStars.moveTo(0, -size * 2);
 
-  const angles = [0, 72, 144, 216, 288];
+    const angles = [0, 72, 144, 216, 288];
 
-  for (let i = 0; i < angles.length; i++) {
-    const angle = angles[i] * (Math.PI / 180);
-    const x2 = size * Math.cos(angle);
-    const y2 = size * Math.sin(angle);
-    contextStars.lineTo(x2, y2);
+    const gradient = contextStars.createRadialGradient(0, 0, 0, 0, 0, size)
+    gradient.addColorStop(0, '#ffffff')
+    gradient.addColorStop(1, 'rgba(243,202,64,1)')
 
-    const angle2 = (angles[i] + 36) * (Math.PI / 180);
-    const x3 = (size / 2) * Math.cos(angle2);
-    const y3 = (size / 2) * Math.sin(angle2);
-    contextStars.lineTo(x3, y3);
-  }
+    contextStars.fillStyle = gradient
 
-  contextStars.closePath();
-  contextStars.fillStyle = color;
-  contextStars.globalAlpha = opacity;
-  contextStars.fill();
-  contextStars.globalAlpha = 1;
-  contextStars.restore(); // Restaura o estado do contexto para evitar rotações subsequentes
+    for (let i = 0; i < angles.length; i++) {
+      const angle = angles[i] * (Math.PI / 180);
+      const x2 = size * Math.cos(angle);
+      const y2 = size * Math.sin(angle);
+      contextStars.lineTo(x2, y2);
+
+      const angle2 = (angles[i] + 36) * (Math.PI / 180);
+      const x3 = (size / 2) * Math.cos(angle2);
+      const y3 = (size / 2) * Math.sin(angle2);
+      contextStars.lineTo(x3, y3);
+    }
+
+    contextStars.closePath();
+    contextStars.globalAlpha = opacity;
+    contextStars.fill();
+    contextStars.globalAlpha = 1;
+    contextStars.restore();
   }
 
   function createExplosion(x, y) {
-  const explosionDistance = 800;
+    const explosionDistance = 800;
 
-  for (let i = 0; i < 2; i++) {
-    const size = 16;
-    const color = starColors[Math.floor(Math.random() * starColors.length)];
-    const angle = (i === 0 ? 30 : 150) * (Math.PI / 180);
-    const x2 = x + explosionDistance * Math.cos(angle);
-    const y2 = y + explosionDistance * Math.sin(angle);
+    for (let i = 0; i < 2; i++) {
+      const size = 16;
+      const angle = (i === 0 ? 30 : 150) * (Math.PI / 180);
+      const x2 = x + explosionDistance * Math.cos(angle);
+      const y2 = y + explosionDistance * Math.sin(angle);
 
-    // Calcula dx e dy com base na diferença entre x2 e x e entre y2 e y,
-    // dividido pela duração da explosão
-    const dx = (x2 - x) / explosionDuration;
-    const dy = (y2 - y) / explosionDuration;
+      const dx = (x2 - x) / explosionDuration;
+      const dy = (y2 - y) / explosionDuration;
 
-    stars.push({
-      x: x,
-      y: y,
-      size: size,
-      color: color,
-      opacity: 1.0,
-      dx: dx,
-      dy: dy,
-      startTime: Date.now(),
-      rotation: Math.random() * (Math.PI * 2),
-    });
-  }
-}
-
-
-  function drawStars() {
-  contextStars.clearRect(0, 0, canvasStars.width, canvasStars.height);//aqui
-
-  for (let i = 0; i < stars.length; i++) {
-    const star = stars[i];
-    const elapsed = Date.now() - star.startTime;
-    
-    if (elapsed < explosionDuration) {
-      star.x += star.dx;
-      star.y += star.dy;
-      star.rotation += 0.1; // Incrementa o ângulo de rotação
-      if (star.rotation >= Math.PI * 2) {
-        star.rotation -= Math.PI * 2;
-      }
-
-      if (elapsed >= explosionDuration - 100) {
-        star.opacity = 1 - ((elapsed - (explosionDuration - 100)) / 100);
-      } else {
-        star.opacity = 1.0;
-      }
-
-      createStar(star.x, star.y, star.size, star.color, star.opacity, star.rotation);
-    } else {
-      stars.splice(i, 1);
-      i--;
+      stars.push({
+        x: x,
+        y: y,
+        size: size,
+        opacity: 1.0,
+        dx: dx,
+        dy: dy,
+        startTime: Date.now(),
+        rotation: Math.random() * (Math.PI * 2),
+      });
     }
   }
 
-  requestAnimationFrame(drawStars);
+  function drawStars() {
+    contextStars.clearRect(0, 0, canvasStars.width, canvasStars.height);
+
+    for (let i = 0; i < stars.length; i++) {
+      const star = stars[i];
+      const elapsed = Date.now() - star.startTime;
+
+      if (elapsed < explosionDuration) {
+        star.x += star.dx;
+        star.y += star.dy;
+        star.rotation += 0.1;
+        if (star.rotation >= Math.PI * 2) {
+          star.rotation -= Math.PI * 2;
+        }
+
+        if (elapsed >= explosionDuration - 100) {
+          star.opacity = 1 - ((elapsed - (explosionDuration - 100)) / 100);
+        } else {
+          star.opacity = 1.0;
+        }
+
+        createStar(star.x, star.y, star.size, star.opacity, star.rotation);
+      } else {
+        stars.splice(i, 1);
+        i--;
+      }
+    }
+
+    requestAnimationFrame(drawStars);
   }
 
-  drawStars()
+  drawStars();
 
   //particles
   function createParticle(x, y) {
@@ -530,12 +537,18 @@ function createPolygonClip(ctx, x, y, size) {
       context.lineWidth = 2;
       context.font = "24px Arial";
     } else if (!drawingCompleted) {
-      context.strokeStyle = "rgb(226, 126, 110)";
-      context.lineWidth = 11;
-      context.beginPath();
-      context.moveTo(lastPos.x, lastPos.y);
-      context.lineTo(currentPos.x, currentPos.y);
-      context.stroke();
+      if (clearLine) { // Verifique se clearLine é verdadeiro
+        context.linerWidth = 0
+      }
+
+      else {
+        context.strokeStyle = "rgb(226, 126, 110)";
+        context.lineWidth = 11;
+        context.beginPath();
+        context.moveTo(lastPos.x, lastPos.y);
+        context.lineTo(currentPos.x, currentPos.y);
+        context.stroke();
+      }
     } else {
       fillVertex(context);
       context.fillStyle = "rgb(226, 126, 110)";
@@ -569,13 +582,11 @@ function createPolygonClip(ctx, x, y, size) {
     lastPos.x = currentPos.x;
     lastPos.y = currentPos.y;
 
-    // Verifica se há um próximo ponto
     if (currentPulsatingIndex < guideDots.length - 1) {
-      // Para a pulsação do ponto anterior
-      guideDots[currentPulsatingIndex].stopPulsating();
+      guideDots[currentPulsatingIndex].stopPulsating()
 
-      currentPulsatingIndex++;
-      guideDots[currentPulsatingIndex].startPulsating(); // Inicia a pulsação do próximo ponto
+      currentPulsatingIndex++
+      guideDots[currentPulsatingIndex].startPulsating()
     }
 
     if (currentIndex === guideDots.length) {
