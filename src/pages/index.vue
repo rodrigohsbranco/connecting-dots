@@ -95,7 +95,7 @@ const handleShowButton = () => {
 }
 
 .conec-dots.active {
-  animation:zoom .7s linear forwards;
+  animation:zoom .6s linear forwards;
 }
 
 .img-background {
@@ -120,7 +120,7 @@ const handleShowButton = () => {
   transform: translate(-50%, -50%);
   display:grid;
   place-items:center;
-  gap:2rem;
+  gap:1rem;
 }
 
 .start__img {
@@ -213,7 +213,7 @@ const handleShowButton = () => {
 
 @keyframes zoom {
   from {
-    transform:scale(.1);
+    transform:scale(.3);
     opacity:0;
   }
 

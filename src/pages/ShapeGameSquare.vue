@@ -675,11 +675,24 @@ function createPolygonClip(ctx, x, y, size) {
 
 .img-background {
   position:absolute;
-  top:0;
-  left:0;
+  left: 50%;
+  transform: translateX(-50%);
   object-fit:cover;
   width:100vw;
   height:100vh;
+  animation:floating-effect .3s linear forwards;
+}
+
+@keyframes floating-effect {
+  from {
+    width:100vw;
+    height:100vh;
+  }
+
+  to {
+    width:102vw;
+    height:100vh;
+  }
 }
 
 .numbers {
