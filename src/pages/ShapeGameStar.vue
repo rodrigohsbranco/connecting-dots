@@ -32,34 +32,84 @@ let drawingCompleted = false;
 
 let lastPos = { x: 100, y: 160 };
 let currentPos = { x: 100, y: 160 };
-let dotSize = 9;
+let dotSize = 10;
+let clearLine = false
+
+let currentPulsatingIndex = 0;
+const minParticleSize = 8
+const maxParticleSize = 15
+
+const minOpacity = 0.7
+const maxOpacity = 1
+const opacityChangeSpeed = .01
+
+const minSpeed = -1
+const maxSpeed = 2
+
+const particles = []//aqui
 
 class Dot {
   constructor(x, y, strokeColor) {
     this.x = x;
     this.y = y;
     this.strokeColor = strokeColor;
+    this.isPulsating = false
+    this.scale = 1
+    this.scaleDirection = 1; 
+    this.pulseSpeed = 0.005
   }
   connect(px, py, ctx) {
     ctx.strokeStyle = this.strokeColor;
-    ctx.lineWidth = 10; // Especifique a largura da linha aqui
+    ctx.lineWidth = 15; // Especifique a largura da linha aqui
     ctx.beginPath();
     ctx.moveTo(this.x, this.y);
     ctx.lineTo(px, py);
     ctx.stroke();
   }
   plot(ctx) {
-    ctx.fillStyle = "rgb(226, 126, 110)";
-    ctx.strokeStyle = this.strokeColor;
-    ctx.lineWidth = 3; // Especifique a largura da borda aqui
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, dotSize, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
+    ctx.save()
+    ctx.translate(this.x, this.y)
+
+    const drawX = 0
+    const drawY = 0
+
+    ctx.scale(this.scale, this.scale)
+
+    ctx.fillStyle = "rgb(226, 126, 110)"
+    ctx.strokeStyle = this.strokeColor
+    ctx.lineWidth = 4
+    ctx.beginPath()
+    ctx.arc(drawX, drawY, dotSize, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.stroke()
+
+    ctx.restore()
   }
   within(px, py) {
     let d = Math.sqrt(Math.pow(px - this.x, 2) + Math.pow(py - this.y, 2));
     return d < dotSize;
+  }
+
+  pulse() {
+    this.scale += this.scaleDirection * this.pulseSpeed;
+
+    if (this.scale <= 1 || this.scale >= 1.3) {
+      this.scaleDirection *= -1;
+    }
+  }
+  startPulsating() {
+    this.isPulsating = true;
+    this.animatePulse();
+  }
+  stopPulsating() {
+    this.isPulsating = false;
+    this.scale = 1;
+  }
+  animatePulse() {
+    if (this.isPulsating) {
+      this.pulse()
+      requestAnimationFrame(this.animatePulse.bind(this))
+    }
   }
 }
 
@@ -139,9 +189,11 @@ onMounted(() => {
     draw();
 
     for (let i = 0; i < guidePoints.length; i++) {
-      guideDots.push(
-        new Dot(guidePoints[i].x, guidePoints[i].y, "rgba(26,27,28,.7)")
-      );
+      const dot = new Dot(guidePoints[i].x, guidePoints[i].y, "#5386E4");
+      if (i === 0) {
+        dot.startPulsating()
+      }
+      guideDots.push(dot);
     }
   }
 
@@ -155,18 +207,21 @@ onMounted(() => {
 
   canvas.addEventListener("pointerdown", (event) => {
     isDrawing = true;
+    clearLine = false
     currentPos.x = event.clientX - canvas.getBoundingClientRect().left;
     currentPos.y = event.clientY - canvas.getBoundingClientRect().top;
     mousePressed();
   });
 
   canvas.addEventListener("mousemove", (event) => {
+    clearLine = false
     currentPos.x = event.clientX - canvas.getBoundingClientRect().left;
     currentPos.y = event.clientY - canvas.getBoundingClientRect().top;
   });
 
   canvas.addEventListener("pointermove", (event) => {
     if (isDrawing) {
+      clearLine = false
       currentPos.x = event.clientX - canvas.getBoundingClientRect().left;
       currentPos.y = event.clientY - canvas.getBoundingClientRect().top;
       mousePressed()
@@ -175,10 +230,12 @@ onMounted(() => {
 
   canvas.addEventListener("pointerup", () => {
     isDrawing = false;
+    clearLine = false
   });
 
   canvas.addEventListener('touchstart', (event) => {
     isDrawing = true;
+    clearLine = false
     const touch = event.touches[0];
     currentPos.x = touch.clientX - canvas.getBoundingClientRect().left;
     currentPos.y = touch.clientY - canvas.getBoundingClientRect().top;
@@ -187,6 +244,7 @@ onMounted(() => {
 
   canvas.addEventListener('touchmove', (event) => {
     if (isDrawing) {
+      clearLine = false
       const touch = event.touches[0];
       currentPos.x = touch.clientX - canvas.getBoundingClientRect().left;
       currentPos.y = touch.clientY - canvas.getBoundingClientRect().top;
@@ -196,6 +254,7 @@ onMounted(() => {
 
   canvas.addEventListener('touchend', () => {
     if (isDrawing) {
+      clearLine = true
       isDrawing = false;
     }
   });
@@ -220,12 +279,18 @@ onMounted(() => {
       context.lineWidth = 2;
       context.font = "24px Arial";
     } else if (!drawingCompleted) {
-      context.strokeStyle = "rgb(226, 126, 110)";
-      context.lineWidth = 5;
-      context.beginPath();
-      context.moveTo(lastPos.x, lastPos.y);
-      context.lineTo(currentPos.x, currentPos.y);
-      context.stroke();
+      if (clearLine) { // Verifique se clearLine é verdadeiro
+        context.linerWidth = 0
+      }
+
+      else {
+        context.strokeStyle = "rgb(226, 126, 110)";
+        context.lineWidth = 11;
+        context.beginPath();
+        context.moveTo(lastPos.x, lastPos.y);
+        context.lineTo(currentPos.x, currentPos.y);
+        context.stroke();
+      }
     } else {
       fillVertex(context);
       context.fillStyle = "rgb(226, 126, 110)";
@@ -258,6 +323,13 @@ onMounted(() => {
       currentIndex++;
       lastPos.x = currentPos.x;
       lastPos.y = currentPos.y;
+
+      if (currentPulsatingIndex < guideDots.length - 1) {
+        guideDots[currentPulsatingIndex].stopPulsating()
+
+        currentPulsatingIndex++
+        guideDots[currentPulsatingIndex].startPulsating()
+      } 
 
       if (currentIndex === guideDots.length) {
         dots.push(new Dot(guideDots[0].x, guideDots[0].y, "#E27E6E"));

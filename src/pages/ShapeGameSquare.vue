@@ -68,24 +68,24 @@ class Dot {
     ctx.stroke();
   }
   plot(ctx) {
-  ctx.save()
-  ctx.translate(this.x, this.y)
+    ctx.save()
+    ctx.translate(this.x, this.y)
 
-  const drawX = 0
-  const drawY = 0
+    const drawX = 0
+    const drawY = 0
 
-  ctx.scale(this.scale, this.scale)
+    ctx.scale(this.scale, this.scale)
 
-  ctx.fillStyle = "rgb(226, 126, 110)"
-  ctx.strokeStyle = this.strokeColor
-  ctx.lineWidth = 4
-  ctx.beginPath()
-  ctx.arc(drawX, drawY, dotSize, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.stroke()
+    ctx.fillStyle = "rgb(226, 126, 110)"
+    ctx.strokeStyle = this.strokeColor
+    ctx.lineWidth = 4
+    ctx.beginPath()
+    ctx.arc(drawX, drawY, dotSize, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.stroke()
 
-  ctx.restore()
-}
+    ctx.restore()
+  }
 
   within(px, py) {
     let d = Math.sqrt(Math.pow(px - this.x, 2) + Math.pow(py - this.y, 2));
@@ -274,7 +274,7 @@ onMounted(() => {
     const touch = event.touches[0];
     currentPos.x = touch.clientX - canvas.getBoundingClientRect().left;
     currentPos.y = touch.clientY - canvas.getBoundingClientRect().top;
-    console.log('puxa')
+
     mousePressed();
   });
 
@@ -285,8 +285,6 @@ onMounted(() => {
       const touch = event.touches[0];
       currentPos.x = touch.clientX - canvas.getBoundingClientRect().left;
       currentPos.y = touch.clientY - canvas.getBoundingClientRect().top;
-
-      console.log('puxando');
 
       const particlesCanvas = document.getElementById("particles");
       const particlesCtx = particlesCanvas.getContext("2d");
@@ -305,22 +303,7 @@ onMounted(() => {
     if (isDrawing) {
       isDrawing = false;
       clearLine = true
-      console.log("soltou")
     }
-  })
-
-  canvasStars.addEventListener("click", (event) => {
-    const rect = canvasStars.getBoundingClientRect() 
-    const x = event.clientX - rect.left 
-    const y = event.clientY - rect.top 
-    createExplosion(x, y)
-  })
-
-  canvasStars.addEventListener("touchstart", (event) => {
-    const rect = canvasStars.getBoundingClientRect()
-    const x = event.touches[0].clientX - rect.left
-    const y = event.touches[0].clientY - rect.top
-    createExplosion(x, y)
   })
 
   const explosionDuration = 500;
