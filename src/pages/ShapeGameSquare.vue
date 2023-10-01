@@ -14,6 +14,9 @@
   import { useRouter } from "vue-router";
   import ConfettiExplosion from 'vue-confetti-explosion';
 
+  import butterBig from "../assets/images/butterbig.png";
+  import butterSmall from "../assets/images/buttersmall.png";
+
 const router = useRouter();
 
 const pageRoute = ref("/ShapeGameOptions");
@@ -50,8 +53,8 @@ class Dot {
     this.x = x;
     this.y = y;
     this.strokeColor = strokeColor;
-    this.isPulsating = false; // Flag para indicar se o ponto deve pulsar
-    this.scale = 1; // Escala inicial
+    this.isPulsating = false
+    this.scale = 1
     this.scaleDirection = 1; 
     this.pulseSpeed = 0.005
   }
@@ -89,10 +92,8 @@ class Dot {
   }
 
   pulse() {
-    // Atualiza a escala
     this.scale += this.scaleDirection * this.pulseSpeed;
 
-    // Inverte a direção da escala quando atingir os limites
     if (this.scale <= 1 || this.scale >= 1.3) {
       this.scaleDirection *= -1;
     }
@@ -107,8 +108,8 @@ class Dot {
   }
   animatePulse() {
     if (this.isPulsating) {
-      this.pulse(); // Aplica o efeito de pulsar
-      requestAnimationFrame(this.animatePulse.bind(this)); // Próximo quadro de animação
+      this.pulse()
+      requestAnimationFrame(this.animatePulse.bind(this))
     }
   }
 }
@@ -617,6 +618,16 @@ function createPolygonClip(ctx, x, y, size) {
 
     <img :src='arrow' class="arrow">
 
+    <img
+      :src="butterBig"
+      class="butter big"
+      alt="butterfly">
+    <img
+      :src="butterSmall"
+      class='butter small'
+      id="butter-small"
+      alt="butterfly">
+
     <BackButton :name="pageRoute" />
     <!-- <HomeButton /> -->
     <canvas class="canvasShow" id="dots"></canvas>
@@ -628,8 +639,22 @@ function createPolygonClip(ctx, x, y, size) {
         <img :src="fullSquare" alt="Forma de Quadrado completa" />
       </article>
 
+      <ul class="container-stars">
+        <div class="star-blink star1"></div>
+        <div class="star-blink star2"></div>
+        <div class="star-blink star3"></div>
+        <div class="star-blink star1"></div>
+        <div class="star-blink star2"></div>
+        <div class="star-blink star3"></div>
+        <div class="star-blink star1"></div>
+        <div class="star-blink star2"></div>
+        <div class="star-blink star3"></div>
+      </ul>
+
       <div class="veryGood__text">
-        <img :src="veryGoodImg" alt="Mensagem de muito bem!" />
+        <div class="writing-container">
+            <h1 class="writing-text">Muito Bem!</h1>
+        </div>
         <img
           @click="nextShape('/ShapeGameTriangle')"
           :src="nextButton"
@@ -695,6 +720,124 @@ function createPolygonClip(ctx, x, y, size) {
   }
 }
 
+.butter {
+  position:absolute;
+}
+
+.butter.big {
+  left:12rem;
+  top:15rem;
+  width:6rem;
+  animation:butterfly-flap 7s ease-in-out infinite, just-appear .7s linear forwards;
+}
+
+.butter.small {
+  width:4rem;
+  right:11rem;
+  top:21rem;
+  animation:butterfly-flap 6s ease-in-out infinite; 
+}
+
+@keyframes butterfly-flap {
+  0%, 100% {
+    transform: translate(0px, 0px) rotateX(0) rotateY(0) rotate(20deg);
+  }
+
+  50% {
+    transform: translate(5px, 14px) rotateX(3deg) rotateY(3deg) rotate(20deg);
+  }
+}
+
+.container-stars {
+  position: absolute;
+  width:80%;
+  top:26.5rem;
+  z-index:4000;
+  height:100px;
+  pointer-events:none;
+}
+
+.star-blink {
+    position:relative;
+    width: 23px !important;
+    height: 23px !important;
+    background-color: transparent;
+    clip-path: polygon(
+        38% 35%,
+        51% 0%,
+        62% 36%,
+        100% 48%,
+        61% 60%,
+        48% 100%,
+        37% 59%,
+        0% 47%
+    );
+    animation: blink 2s infinite;
+}
+
+.star-blink:nth-child(1) {
+    top:3rem;
+    left:20%;
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.star-blink:nth-child(2) {
+    top: 5rem;
+    left: 70%;
+    background-color: rgba(35, 181, 211, 1);
+}
+
+.star-blink:nth-child(3) {
+    top: 5rem;
+    left: 50%;
+    background-color: rgba(243, 202, 64, 1);
+}
+
+.star-blink:nth-child(4) {
+    top: 7rem;
+    left: 40%;
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.star-blink:nth-child(5) {
+    top:9rem;
+    left: 10%;
+    background-color: rgba(35, 181, 211, 1);
+}
+
+.star-blink:nth-child(6) {
+    top: 6rem;
+    left: 80%;
+    background-color: rgba(243, 202, 64, 1);
+}
+
+.star-blink:nth-child(7) {
+    top:10rem;
+    left: 60%;
+    background-color: rgba(255, 0, 0, 1);
+}
+
+.star-blink:nth-child(8) {
+    top: 10rem;
+    left: 30%;
+    background-color: rgba(0, 255, 0, 1);
+}
+
+.star-blink:nth-child(9) {
+    top: 10rem;
+    left: 20%;
+    background-color: rgba(0, 0, 255, 1);
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
 .numbers {
   position:absolute;
   width:25.5rem;
@@ -733,17 +876,51 @@ function createPolygonClip(ctx, x, y, size) {
   width: 30rem;
   height: 27rem;
   border-radius: 0.5rem;
+  margin-top:1rem;
 }
 
 .veryGood div {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap:1rem;
+  gap:0rem;
   width: 600px;
   position: relative;
   left: 3.5rem;
-  top: -1rem;
+  margin-top: -2rem;
+}
+
+.veryGood.active div img {
+  width:20rem;
+}
+
+.veryGood.active .writing-container {
+  text-align: center;
+  position:relative;
+  left:-.5rem;
+  width:max-content;
+}
+.writing-text {
+  font-family: 'Patrick Hand', cursive;
+}
+
+.veryGood.active .writing-text {
+  font-size:7.5rem;
+  font-weight:bolder;
+  letter-spacing:3px;
+  color:#573280;
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing .7s steps(30, end);
+}
+
+@keyframes typing {
+  from {
+      width: 0;
+  }
+  to {
+      width: 100%;
+  }
 }
 
 .arrow {
@@ -771,13 +948,11 @@ function createPolygonClip(ctx, x, y, size) {
   }
 }
 
-.veryGood div img:first-child {
-  width: 33rem;
-}
-
 .veryGood div img:last-child {
   cursor: pointer;
   border-radius: 1rem;
+  position:relative;
+  top:-.5rem;
 }
 
 .veryGood__text {
@@ -800,8 +975,33 @@ function createPolygonClip(ctx, x, y, size) {
     top: -1rem;
   }
 
-  .veryGood div img:first-child {
-    width: 23rem;
+  .container-stars {
+
+  width:80%;
+  top:17rem;
+  height:100px;
+}
+
+.star-blink {
+    position:relative;
+    width: 23px !important;
+    height: 23px !important;
+}
+
+  .veryGood.active div img {
+    top:0rem;
+  }
+
+  .veryGood.active .writing-container {
+    text-align: center;
+    position:relative;
+    left:0rem;
+    top:1rem;
+    width:max-content;
+  }
+
+  .veryGood.active .writing-text {
+    font-size:5.5rem;
   }
 }
 
