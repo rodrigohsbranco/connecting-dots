@@ -3,6 +3,11 @@
     src: url(./FontsFree-Net-SF-Pro-Rounded-Bold.ttf);
 }
 
+@font-face {
+  font-family: patrick_hand;
+  src: url(./PatrickHand-Regular.ttf);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -20,6 +25,10 @@ body {
     font-size: 0.79rem;
     font-family: pro_rounded;
     /* cursor: none; */
+}
+
+.writing-text {
+  font-family: patrick_hand;
 }
 
 /* Classe de display flex */

@@ -1,18 +1,19 @@
 <script setup>
-  import fullSquare from "../assets/images/squarePicture.png";
-  import veryGoodImg from "../assets/images/veryGoodImg.png";
+  import fullSquare from "../assets/images/squarePicture.png"
+  import veryGoodImg from "../assets/images/veryGoodImg.png"
 
-  import arrow from "../assets/images/0-arrow.png";
-  import nextButton from "../assets/images/nextButton.png";
+  import arrow from "../assets/images/0-arrow.png"
+  import nextButton from "../assets/images/nextButton.png"
 
-  import { onMounted, ref } from "vue";
-  import shapeGameBg from "../assets/images/shapeGameBg.png";
-  import numberSquare from "../assets/images/numbers/square.png";
+  import { onMounted, ref } from "vue"
+  import shapeGameBg from "../assets/images/shapeGameBg.png"
+  import numberSquare from "../assets/images/numbers/square.png"
 
-  import BackButton from "../components/BackButton.vue";
-  import HomeButton from "../components/HomeButton.vue";
-  import { useRouter } from "vue-router";
-  import ConfettiExplosion from 'vue-confetti-explosion';
+  import BackButton from "../components/BackButton.vue"
+  import HomeButton from "../components/HomeButton.vue"
+
+  import { useRouter } from "vue-router"
+  import ConfettiExplosion from 'vue-confetti-explosion'
 
   import butterBig from "../assets/images/butterbig.png";
   import butterSmall from "../assets/images/buttersmall.png";
@@ -831,10 +832,10 @@ function createPolygonClip(ctx, x, y, size) {
 
 @keyframes blink {
     0%, 100% {
-        opacity: 0;
+      opacity: 0;
     }
     50% {
-        opacity: 1;
+      opacity: 1;
     }
 }
 
@@ -900,9 +901,6 @@ function createPolygonClip(ctx, x, y, size) {
   left:-.5rem;
   width:max-content;
 }
-.writing-text {
-  font-family: 'Patrick Hand', cursive;
-}
 
 .veryGood.active .writing-text {
   font-size:7.5rem;
@@ -911,7 +909,7 @@ function createPolygonClip(ctx, x, y, size) {
   color:#573280;
   overflow: hidden;
   white-space: nowrap;
-  animation: typing .7s steps(30, end);
+  animation: typing .3s steps(30, end);
 }
 
 @keyframes typing {

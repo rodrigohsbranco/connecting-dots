@@ -1,8 +1,13 @@
 <script setup>
+import ConfettiExplosion from 'vue-confetti-explosion'
+
 import hexagonPicture from "../assets/images/hexagonPicture.png";
 import veryGoodImg from "../assets/images/veryGoodImg.png";
 import nextButton from "../assets/images/nextButton.png";
 import arrow from "../assets/images/0-arrow.png";
+
+import butterBig from "../assets/images/butterbig.png";
+import butterSmall from "../assets/images/buttersmall.png";
 
 import { onMounted, ref } from "vue";
 import shapeGameBg from "../assets/images/shapeGameBg.png";
@@ -16,6 +21,8 @@ const router = useRouter();
 const pageRoute = ref("/ShapeGameOptions");
 
 const nextShape = (next) => router.push(`${next}`);
+
+let explosion = ref(false)
 
 let dots = [];
 let guideDots = [];
@@ -252,6 +259,8 @@ onMounted(() => {
         document.querySelector("#dots").style.display = "none";
         document.querySelector(".numbers").style.display = "none";
         document.querySelector(".arrow").style.display = "none";
+
+        explosion.value = true
         drawingCompleted = true;
       }
     }
@@ -267,6 +276,16 @@ onMounted(() => {
     <img :src="numberHexa" class='numbers' alt="numbers">
     <img :src='arrow' class="arrow">
 
+    <img
+      :src="butterBig"
+      class="butter big"
+      alt="butterfly">
+    <img
+      :src="butterSmall"
+      class='butter small'
+      id="butter-small"
+      alt="butterfly">
+
     <BackButton :name="pageRoute" />
     <!-- <HomeButton /> -->
     <canvas class="canvasShow" id="dots"></canvas>
@@ -276,8 +295,23 @@ onMounted(() => {
         <img :src="hexagonPicture" alt="Forma de Hexágono completa" />
       </article>
 
+      <ul class="container-stars">
+        <div class="star-blink star1"></div>
+        <div class="star-blink star2"></div>
+        <div class="star-blink star3"></div>
+        <div class="star-blink star1"></div>
+        <div class="star-blink star2"></div>
+        <div class="star-blink star3"></div>
+        <div class="star-blink star1"></div>
+        <div class="star-blink star2"></div>
+        <div class="star-blink star3"></div>
+      </ul>
+
       <div class="veryGood__text">
-        <img :src="veryGoodImg" alt="Mensagem de muito bem!" />
+        <div class="writing-container">
+          <h1 class="writing-text">Muito Bem!</h1>
+        </div>
+
         <img
           @click="nextShape('/ShapeGameStar')"
           :src="nextButton"
@@ -285,6 +319,10 @@ onMounted(() => {
         />
       </div>
     </section>
+
+    <div v-if="explosion" class='confetti'>
+      <ConfettiExplosion :numberOfPieces="900"/>
+    </div>
   </div>
 </template>
 
@@ -297,6 +335,19 @@ onMounted(() => {
   overflow: hidden;
   display: grid;
   place-items: center;
+}
+
+.confetti {
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  display:grid;
+  place-items:center;
+  width: 100vw;
+  height: 100vh;
+  z-index: 3000;
+  pointer-events: none;
 }
 
 .img-background {
@@ -318,7 +369,7 @@ onMounted(() => {
   margin-top:-9rem;
   width:8rem;
   margin-left:-45rem;
-  animation:code 3s linear infinite;
+  animation:code 6s linear infinite;
 }
 
 @keyframes code {
@@ -344,21 +395,139 @@ onMounted(() => {
   top:1rem;
 }
 
+.butter {
+  position:absolute;
+}
+
+.butter.big {
+  right:15rem;
+  top:5rem;
+  width:6rem;
+  animation:butterfly-flap 7s ease-in-out infinite, just-appear .7s linear forwards;
+}
+
+.butter.small {
+  width:4rem;
+  right:12rem;
+  top:9rem;
+  animation:butterfly-flap 6s ease-in-out infinite; 
+}
+
+@keyframes butterfly-flap {
+  0%, 100% {
+    transform: translate(0px, 0px) rotateX(0) rotateY(0) rotate(20deg);
+  }
+
+  50% {
+    transform: translate(5px, 14px) rotateX(3deg) rotateY(3deg) rotate(20deg);
+  }
+}
+
+.container-stars {
+  position: absolute;
+  width:500px;
+  top:25rem;
+  z-index:4000;
+  height:100px;
+  pointer-events:none;
+}
+
+.star-blink {
+    position:relative;
+    width: 23px !important;
+    height: 23px !important;
+    background-color: transparent;
+    clip-path: polygon(
+        38% 35%,
+        51% 0%,
+        62% 36%,
+        100% 48%,
+        61% 60%,
+        48% 100%,
+        37% 59%,
+        0% 47%
+    );
+    animation: blink 2s infinite;
+}
+
+.star-blink:nth-child(1) {
+    top:3rem;
+    left:20%;
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.star-blink:nth-child(2) {
+    top: 5rem;
+    left: 70%;
+    background-color: rgba(35, 181, 211, 1);
+}
+
+.star-blink:nth-child(3) {
+    top: 5rem;
+    left: 50%;
+    background-color: rgba(243, 202, 64, 1);
+}
+
+.star-blink:nth-child(4) {
+    top: 7rem;
+    left: 40%;
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.star-blink:nth-child(5) {
+    top:9rem;
+    left: 10%;
+    background-color: rgba(35, 181, 211, 1);
+}
+
+.star-blink:nth-child(6) {
+    top: 6rem;
+    left: 80%;
+    background-color: rgba(243, 202, 64, 1);
+}
+
+.star-blink:nth-child(7) {
+    top:10rem;
+    left: 60%;
+    background-color: rgba(255, 0, 0, 1);
+}
+
+.star-blink:nth-child(8) {
+    top: 10rem;
+    left: 30%;
+    background-color: rgba(0, 255, 0, 1);
+}
+
+.star-blink:nth-child(9) {
+    top: 10rem;
+    left: 20%;
+    background-color: rgba(0, 0, 255, 1);
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
 .veryGood {
   user-select:none;
   position: absolute;
-  top: 5rem;
-  width: 100vw;
-  margin: auto;
-  left: 0;
+  top: 50%;
+  left:50%;
+  user-select:none;
+  transform: translate(-50%, -50%);
   display: none;
   z-index: 1000;
-  place-items: center;
   height: max-content;
 }
 
 .veryGood.active {
   display: grid;
+  place-items: center;
   animation: just-appear 0.3s linear forwards;
 }
 
@@ -370,23 +539,44 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 580px;
+  gap:0rem;
+  width: 600px;
   position: relative;
-  left: 4rem;
-  top: -1rem;
+  left: 3.5rem;
+  margin-top: -3rem;
 }
 
-.veryGood div img:first-child {
-  width: 29rem;
+.veryGood.active .veryGood__text img {
+  width:20rem;
+border-radius:1rem;
+margin-top:-2rem;
+cursor:pointer;
 }
 
-.veryGood div img:last-child {
-  cursor: pointer;
-  border-radius: 1rem;
+.veryGood.active .writing-container {
+  text-align: center;
+  position:relative;
+  left:-.5rem;
+  width:max-content;
 }
 
-.veryGood__text {
-  margin-top: -2rem;
+.veryGood.active .writing-text {
+  font-size:7.5rem;
+  font-weight:bolder;
+  letter-spacing:3px;
+  color:#3D3B8E;
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing .5s steps(30, end);
+}
+
+@keyframes typing {
+  from {
+      width: 0;
+  }
+  to {
+      width: 100%;
+  }
 }
 
 @media (max-width:800px), (max-height:500px) {
@@ -400,14 +590,39 @@ onMounted(() => {
 }
 
 .veryGood div {
-  width: 460px;
-  left: 3rem;
-  top: -1rem;
+  width:460px;
+  left:3rem;
+  top:-1rem;
 }
 
-.veryGood div img:first-child {
-  width: 23rem;
+.container-stars {
+  width:80%;
+  top:16rem;
+  height:100px;
 }
+
+.star-blink {
+  position:relative;
+  width: 23px !important;
+  height: 23px !important;
+}
+
+  .veryGood.active .veryGood__text img {
+    margin-top:0;
+    width:5rem;
+  }
+
+  .veryGood.active .writing-container {
+    text-align: center;
+    position:relative;
+    left:0rem;
+    top:1rem;
+    width:max-content;
+  }
+
+  .veryGood.active .writing-text {
+    font-size:5.5rem;
+  }
 }
 
 @media (max-width:583px), (max-height:387px) {
