@@ -22,12 +22,14 @@ const pageRoute = ref("/ShapeGameOptions");
 
 const nextShape = (next) => router.push(`${next}`);
 
-let dots = [];
+let explosion = ref(false);
+
+onMounted(() => {
+  let dots = [];
 let guideDots = [];
 let currentIndex = 0;
 let drawingCompleted = false;
 
-let explosion = ref(false);
 let lastPos = { x: 100, y: 160 };
 let currentPos = { x: 100, y: 160 };
 let dotSize = 12;
@@ -111,7 +113,6 @@ class Dot {
   }
 }
 
-onMounted(() => {
   const canvas = document.getElementById("dots");
   const context = canvas.getContext("2d");
 

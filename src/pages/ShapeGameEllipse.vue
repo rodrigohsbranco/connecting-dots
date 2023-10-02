@@ -24,7 +24,8 @@ const nextShape = (next) => router.push(`${next}`);
 
 let explosion = ref(false)
 
-let dots = [];
+onMounted(() => {
+  let dots = [];
 let guideDots = [];
 let currentIndex = 0;
 let drawingCompleted = false;
@@ -112,7 +113,6 @@ class Dot {
   }
 }
 
-onMounted(() => {
   const canvas = document.getElementById("dots");
   const context = canvas.getContext("2d");
 

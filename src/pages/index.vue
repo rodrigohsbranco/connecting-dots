@@ -95,7 +95,7 @@ const handleShowButton = () => {
 }
 
 .conec-dots.active {
-  animation:zoom .6s linear forwards;
+  animation:zoom .3s linear forwards;
 }
 
 .img-background {
