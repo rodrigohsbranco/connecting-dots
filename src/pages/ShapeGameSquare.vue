@@ -24,7 +24,10 @@ const pageRoute = ref("/ShapeGameOptions");
 
 const nextShape = (next) => router.push(`${next}`);
 
+let explosion = ref(false);
+
 onMounted(() => {
+
   const minParticleSize = 8
   const maxParticleSize = 15
 
