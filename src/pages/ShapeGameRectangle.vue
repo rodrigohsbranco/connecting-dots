@@ -434,6 +434,12 @@ function updateParticles() {
   for (let i = 0; i < particles.length; i++) {
     const particle = particles[i]
 
+    if (particle.opacity <= 0) {
+      particles.splice(i, 1)
+      i--
+      continue
+    }
+
     contextParticles.save()
 
     createPolygonClip(contextParticles, particle.x, particle.y, particle.size)
@@ -450,11 +456,6 @@ function updateParticles() {
     particle.y += particle.speedY
 
     particle.opacity -= opacityChangeSpeed
-
-    if (particle.opacity <= 0) {
-      particles.splice(i, 1)
-      i--
-    }
   }
 
   requestAnimationFrame(updateParticles)

@@ -22,100 +22,98 @@ const router = useRouter();
 
 const pageRoute = ref("/ShapeGameOptions");
 
-let explosion = ref(false);
-
 const nextShape = (next) => router.push(`${next}`);
 
-const minParticleSize = 8
-const maxParticleSize = 15
-
-const minOpacity = 0.7
-const maxOpacity = 1
-const opacityChangeSpeed = .01
-
-const minSpeed = -1
-const maxSpeed = 2
-
-const particles = []//aqui
-let clearLine = false
-
-let dots = [];
-let guideDots = [];
-let currentIndex = 0;
-let drawingCompleted = false;
-
-let lastPos = { x: 100, y: 160 };
-let currentPos = { x: 100, y: 160 };
-let dotSize = 12;
-let currentPulsatingIndex = 0;
-
-class Dot {
-  constructor(x, y, strokeColor) {
-    this.x = x;
-    this.y = y;
-    this.strokeColor = strokeColor;
-    this.isPulsating = false
-    this.scale = 1
-    this.scaleDirection = 1; 
-    this.pulseSpeed = 0.005
-  }
-  connect(px, py, ctx) {
-    ctx.strokeStyle = this.strokeColor;
-    ctx.lineWidth = 15;
-    ctx.beginPath();
-    ctx.moveTo(this.x, this.y);
-    ctx.lineTo(px, py);
-    ctx.stroke();
-  }
-  plot(ctx) {
-    ctx.save()
-    ctx.translate(this.x, this.y)
-
-    const drawX = 0
-    const drawY = 0
-
-    ctx.scale(this.scale, this.scale)
-
-    ctx.fillStyle = "rgb(226, 126, 110)"
-    ctx.strokeStyle = this.strokeColor
-    ctx.lineWidth = 4
-    ctx.beginPath()
-    ctx.arc(drawX, drawY, dotSize, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.stroke()
-
-    ctx.restore()
-  }
-
-  within(px, py) {
-    let d = Math.sqrt(Math.pow(px - this.x, 2) + Math.pow(py - this.y, 2));
-    return d < dotSize;
-  }
-
-  pulse() {
-    this.scale += this.scaleDirection * this.pulseSpeed;
-
-    if (this.scale <= 1 || this.scale >= 1.3) {
-      this.scaleDirection *= -1;
-    }
-  }
-  startPulsating() {
-    this.isPulsating = true;
-    this.animatePulse();
-  }
-  stopPulsating() {
-    this.isPulsating = false;
-    this.scale = 1;
-  }
-  animatePulse() {
-    if (this.isPulsating) {
-      this.pulse()
-      requestAnimationFrame(this.animatePulse.bind(this))
-    }
-  }
-}
-
 onMounted(() => {
+  const minParticleSize = 8
+  const maxParticleSize = 15
+
+  const minOpacity = 0.7
+  const maxOpacity = 1
+  const opacityChangeSpeed = .01
+
+  const minSpeed = -1
+  const maxSpeed = 2
+
+  const particles = []//aqui
+  let clearLine = false
+
+  let dots = [];
+  let guideDots = [];
+  let currentIndex = 0;
+  let drawingCompleted = false;
+
+  let lastPos = { x: 100, y: 160 };
+  let currentPos = { x: 100, y: 160 };
+  let dotSize = 12;
+  let currentPulsatingIndex = 0;
+
+  class Dot {
+    constructor(x, y, strokeColor) {
+      this.x = x;
+      this.y = y;
+      this.strokeColor = strokeColor;
+      this.isPulsating = false
+      this.scale = 1
+      this.scaleDirection = 1; 
+      this.pulseSpeed = 0.005
+    }
+    connect(px, py, ctx) {
+      ctx.strokeStyle = this.strokeColor;
+      ctx.lineWidth = 15;
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y);
+      ctx.lineTo(px, py);
+      ctx.stroke();
+    }
+    plot(ctx) {
+      ctx.save()
+      ctx.translate(this.x, this.y)
+
+      const drawX = 0
+      const drawY = 0
+
+      ctx.scale(this.scale, this.scale)
+
+      ctx.fillStyle = "rgb(226, 126, 110)"
+      ctx.strokeStyle = this.strokeColor
+      ctx.lineWidth = 4
+      ctx.beginPath()
+      ctx.arc(drawX, drawY, dotSize, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.stroke()
+
+      ctx.restore()
+    }
+
+    within(px, py) {
+      let d = Math.sqrt(Math.pow(px - this.x, 2) + Math.pow(py - this.y, 2));
+      return d < dotSize;
+    }
+
+    pulse() {
+      this.scale += this.scaleDirection * this.pulseSpeed;
+
+      if (this.scale <= 1 || this.scale >= 1.3) {
+        this.scaleDirection *= -1;
+      }
+    }
+    startPulsating() {
+      this.isPulsating = true;
+      this.animatePulse();
+    }
+    stopPulsating() {
+      this.isPulsating = false;
+      this.scale = 1;
+    }
+    animatePulse() {
+      if (this.isPulsating) {
+        this.pulse()
+        requestAnimationFrame(this.animatePulse.bind(this))
+      }
+    }
+  }
+
   const canvas = document.getElementById("dots")
   const context = canvas.getContext("2d")
 
@@ -430,6 +428,12 @@ function updateParticles() {
   for (let i = 0; i < particles.length; i++) {
     const particle = particles[i]
 
+    if (particle.opacity <= 0) {
+      particles.splice(i, 1)
+      i--
+      continue
+    }
+
     contextParticles.save()
 
     createPolygonClip(contextParticles, particle.x, particle.y, particle.size)
@@ -446,11 +450,6 @@ function updateParticles() {
     particle.y += particle.speedY
 
     particle.opacity -= opacityChangeSpeed
-
-    if (particle.opacity <= 0) {
-      particles.splice(i, 1)
-      i--
-    }
   }
 
   requestAnimationFrame(updateParticles)
