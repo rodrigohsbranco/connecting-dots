@@ -100,10 +100,12 @@ class Dot {
   startPulsating() {
     this.isPulsating = true;
     this.animatePulse();
+    this.strokeColor = '#820B8A'
   }
   stopPulsating() {
     this.isPulsating = false;
     this.scale = 1;
+    this.strokeColor = '#5386E4'
   }
   animatePulse() {
     if (this.isPulsating) {
@@ -787,6 +789,10 @@ function createPolygonClip(ctx, x, y, size) {
   z-index:4000;
   height:100px;
   pointer-events:none;
+}
+
+.arrow, .butter, #dots {
+ user-select:none;
 }
 
 .star-blink {

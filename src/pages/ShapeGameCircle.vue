@@ -102,10 +102,12 @@ class Dot {
   startPulsating() {
     this.isPulsating = true;
     this.animatePulse();
+    this.strokeColor = '#820B8A'
   }
   stopPulsating() {
     this.isPulsating = false;
     this.scale = 1;
+    this.strokeColor = '#5386E4'
   }
   animatePulse() {
     if (this.isPulsating) {
@@ -133,28 +135,33 @@ class Dot {
     const heightMin = 305,
           widthMin = 365;
 
+    const centerX = 220; // Centro do canvas
+    const centerY = 220; // Centro do canvas
+    const radius = 205; // Raio desejado
+    const occupiedSpace = 390
+
     const guidePoints = [
-      { x: 12, y: 195 },
-      { x: 20, y: 140 },
-      { x: 40, y: 90 },
-      { x: 70, y: 50 },
-      { x: 120, y: 18 },
-      { x: 207, y: 11 },
-      { x: 290, y: 20 },
-      { x: 340, y: 50 },
-      { x: 370, y: 90 },
-      { x: 390, y: 140 },
-      { x: 400, y: 195 },
-      { x: 390, y: 255 },
-      { x: 370, y: 315 },
-      { x: 330, y: 360 },
-      { x: 280, y: 380 },
-      { x: 210, y: 390 },
-      { x: 140, y: 380 },
-      { x: 80, y: 350 },
-      { x: 40, y: 310 },
-      { x: 20, y: 260 },
-      { x: 12, y: 195 },
+      { x: centerX + (12 / 420 * occupiedSpace - radius), y: centerY + (195 / 420 * occupiedSpace - radius) },
+      { x: centerX + (20 / 420 * occupiedSpace - radius), y: centerY + (140 / 420 * occupiedSpace - radius) },
+      { x: centerX + (40 / 420 * occupiedSpace - radius), y: centerY + (90 / 420 * occupiedSpace - radius) },
+      { x: centerX + (70 / 420 * occupiedSpace - radius), y: centerY + (50 / 420 * occupiedSpace - radius) },
+      { x: centerX + (120 / 420 * occupiedSpace - radius), y: centerY + (18 / 420 * occupiedSpace - radius) },
+      { x: centerX + (207 / 420 * occupiedSpace - radius), y: centerY + (2 / 420 * occupiedSpace - radius) },
+      { x: centerX + (290 / 420 * occupiedSpace - radius), y: centerY + (20 / 420 * occupiedSpace - radius) },
+      { x: centerX + (340 / 420 * occupiedSpace - radius), y: centerY + (50 / 420 * occupiedSpace - radius) },
+      { x: centerX + (370 / 420 * occupiedSpace - radius), y: centerY + (90 / 420 * occupiedSpace - radius) },
+      { x: centerX + (390 / 420 * occupiedSpace - radius), y: centerY + (140 / 420 * occupiedSpace - radius) },
+      { x: centerX + (400 / 420 * occupiedSpace - radius), y: centerY + (195 / 420 * occupiedSpace - radius) },
+      { x: centerX + (390 / 420 * occupiedSpace - radius), y: centerY + (255 / 420 * occupiedSpace - radius) },
+      { x: centerX + (370 / 420 * occupiedSpace - radius), y: centerY + (315 / 420 * occupiedSpace - radius) },
+      { x: centerX + (330 / 420 * occupiedSpace - radius), y: centerY + (360 / 420 * occupiedSpace - radius) },
+      { x: centerX + (280 / 420 * occupiedSpace - radius), y: centerY + (380 / 420 * occupiedSpace - radius) },
+      { x: centerX + (210 / 420 * occupiedSpace - radius), y: centerY + (390 / 420 * occupiedSpace - radius) },
+      { x: centerX + (140 / 420 * occupiedSpace - radius), y: centerY + (380 / 420 * occupiedSpace - radius) },
+      { x: centerX + (80 / 420 * occupiedSpace - radius), y: centerY + (350 / 420 * occupiedSpace - radius) },
+      { x: centerX + (40 / 420 * occupiedSpace - radius), y: centerY + (310 / 420 * occupiedSpace - radius) },
+      { x: centerX + (20 / 420 * occupiedSpace - radius), y: centerY + (260 / 420 * occupiedSpace - radius) },
+      { x: centerX + (12 / 420 * occupiedSpace - radius), y: centerY + (195 / 420 * occupiedSpace - radius) },
     ];
 
     let scaleFactorX, scaleFactorY;
@@ -699,6 +706,10 @@ function createPolygonClip(ctx, x, y, size) {
   z-index:4000;
   height:100px;
   pointer-events:none;
+}
+
+.arrow, .butter, #dots {
+ user-select:none;
 }
 
 .star-blink {

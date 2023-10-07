@@ -104,10 +104,12 @@ onMounted(() => {
     startPulsating() {
       this.isPulsating = true;
       this.animatePulse();
+      this.strokeColor = '#820B8A'
     }
     stopPulsating() {
       this.isPulsating = false;
       this.scale = 1;
+      this.strokeColor = '#5386E4'
     }
     animatePulse() {
       if (this.isPulsating) {
@@ -212,6 +214,7 @@ onMounted(() => {
 
    for (let i = 0; i < guidePoints.length; i++) {
       const dot = new Dot(guidePoints[i].x, guidePoints[i].y, "#5386E4");
+      
       if (i === 0) {
         dot.startPulsating()
       }
@@ -708,6 +711,7 @@ function createPolygonClip(ctx, x, y, size) {
 
 .butter {
   position:absolute;
+  user-select:none;
 }
 
 .butter.big {
@@ -836,6 +840,7 @@ function createPolygonClip(ctx, x, y, size) {
   z-index: 1000;
   position: relative;
   top:-1rem;
+  user-select:none;
 }
 
 .veryGood {
@@ -908,6 +913,7 @@ function createPolygonClip(ctx, x, y, size) {
 
 .arrow {
   position:absolute;
+  user-select:none;
   margin-top:-31rem;
   width:8rem;
   margin-left:-38rem;

@@ -100,10 +100,12 @@ class Dot {
   startPulsating() {
     this.isPulsating = true;
     this.animatePulse();
+    this.strokeColor = '#820B8A'
   }
   stopPulsating() {
     this.isPulsating = false;
     this.scale = 1;
+    this.strokeColor = '#5386E4'
   }
   animatePulse() {
     if (this.isPulsating) {
@@ -893,6 +895,10 @@ function createPolygonClip(ctx, x, y, size) {
   border-radius:1rem !important;
   cursor:pointer;
   margin-top:-2.5rem;
+}
+
+.arrow, .butter, #dots {
+ user-select:none;
 }
 
 .veryGood.active .writing-container {
