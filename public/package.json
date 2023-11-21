@@ -1,5 +1,10 @@
 {
     "name": "Ligar Pontos",
-    "version": 6,
-    "img": "thumbnail.png"
+    "version": 8,
+    "img": "thumbnail.png",
+    "nivel": [
+        "creche",
+        "primeiroPeriodo",
+        "segundoPeriodo"
+    ]
 }
